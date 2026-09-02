@@ -3,8 +3,9 @@ var u={key:function(s){return String(s||'').trim().toLowerCase()},num:function(v
 function sector(t){return t.meta.sector||t.meta.sec||t.meta.prd||t.meta.region||t.meta.zone||'Unassigned'}
 function teamMap(t){var o={};Object.keys(t.n||{}).forEach(function(k){o[k]=t.n[k].name||k});return o}
 function expand(a){var o=[];(a||[]).forEach(function(x){for(var i=0;i<(x.n||1);i++)o.push(x.name)});return o}
-function stat(map,name){var k=u.key(name);if(!k)return null;if(!map[k])map[k]={key:k,name:name,g:0,a:0,appearances:0,matchSet:{},sports:{},teams:{},registry:null};return map[k]}
+function stat(map,name){var k=u.key(name);if(!k)return null;if(!map[k])map[k]={key:k,name:name,g:0,a:0,appearances:0,matchSet:{},sports:{},teams:{},contexts:{},registry:null};return map[k]}
 function involved(s,m,side){var k=m._id+'|'+side;if(!s.matchSet[k]){s.matchSet[k]=1;s.appearances++}}
+function playerContext(s,sc,sec,sea,team){s.sports[sc]=1;s.teams[sc+'|'+team]=1;s.contexts[sec+'|'+sea]=1}
 function build(input){
  var cfg=(input.sportsCfg&&input.sportsCfg.sports)||[],reg=input.registry||{},raw=input.raw||{};
  var w={sports:{},players:{},teams:{},competitions:[],matches:[],seasons:{},sectors:{},issues:[],records:[],registry:reg};
@@ -23,14 +24,14 @@ function build(input){
      [m.home,m.away].forEach(function(code){var q=w.teams[sc.id+'|'+code];if(!q)return;q.matches.push(m._id);q.for+=code===m.home?m.sh:m.sa;q.against+=code===m.home?m.sa:m.sh;var r=code===m.home?(m.sh>m.sa?1:m.sh<m.sa?-1:0):(m.sa>m.sh?1:m.sa<m.sh?-1:0);if(r>0)q.wins++;else if(r<0)q.losses++;else q.draws++})
     }else{
      bucket.totals.goals+=m.sh+m.sa;var h=w.teams[sc.id+'|'+m.home],a=w.teams[sc.id+'|'+m.away];if(h){h.matches.push(m._id);h.for+=m.sh;h.against+=m.sa}if(a){a.matches.push(m._id);a.for+=m.sa;a.against+=m.sh}if(m.sh>m.sa){if(h)h.wins++;if(a)a.losses++}else if(m.sh<m.sa){if(a)a.wins++;if(h)h.losses++}else{if(h)h.draws++;if(a)a.draws++}
-     expand(m.gh).forEach(function(p){var s=stat(w.players,p);s.g++;s.sports[sc.id]=1;s.teams[sc.id+'|'+m.home]=1;involved(s,m,'h')});expand(m.ga).forEach(function(p){var s=stat(w.players,p);s.g++;s.sports[sc.id]=1;s.teams[sc.id+'|'+m.away]=1;involved(s,m,'a')});expand(m.ah).forEach(function(p){var s=stat(w.players,p);s.a++;s.sports[sc.id]=1;s.teams[sc.id+'|'+m.home]=1;involved(s,m,'h')});expand(m.aa).forEach(function(p){var s=stat(w.players,p);s.a++;s.sports[sc.id]=1;s.teams[sc.id+'|'+m.away]=1;involved(s,m,'a')});
+     expand(m.gh).forEach(function(p){var s=stat(w.players,p);s.g++;playerContext(s,sc.id,sec,sea,m.home);involved(s,m,'h')});expand(m.ga).forEach(function(p){var s=stat(w.players,p);s.g++;playerContext(s,sc.id,sec,sea,m.away);involved(s,m,'a')});expand(m.ah).forEach(function(p){var s=stat(w.players,p);s.a++;playerContext(s,sc.id,sec,sea,m.home);involved(s,m,'h')});expand(m.aa).forEach(function(p){var s=stat(w.players,p);s.a++;playerContext(s,sc.id,sec,sea,m.away);involved(s,m,'a')});
     }
    });
-   Object.keys(t.sq||{}).forEach(function(code){var arr=(t.sq[code].start||[]).concat(t.sq[code].bench||[]);arr.forEach(function(p){var s=stat(w.players,p.name);s.sports[sc.id]=1;s.teams[sc.id+'|'+code]=1})});
+   Object.keys(t.sq||{}).forEach(function(code){var arr=(t.sq[code].start||[]).concat(t.sq[code].bench||[]);arr.forEach(function(p){var s=stat(w.players,p.name);playerContext(s,sc.id,sec,sea,code)})});
   });w.sports[sc.id]=bucket;
  });
  Object.keys(reg).forEach(function(k){if(k==='_comment')return;var r=reg[k];if(!w.players[k])w.players[k]=stat(w.players,r.name||k);w.players[k].registry=r;w.players[k].clubCodes=r.clubs||[];w.players[k].sports=w.players[k].sports||{};(r.sports||[]).forEach(function(s){w.players[k].sports[s]=1})});
- Object.values(w.players).forEach(function(p){p.gp=p.g+p.a;p.gPerApp=p.appearances?p.g/p.appearances:0;p.aPerApp=p.appearances?p.a/p.appearances:0;p.gaPerApp=p.appearances?p.gp/p.appearances:0});
+ Object.values(w.players).forEach(function(p){p.gp=p.g+p.a;p.gPerApp=p.appearances?p.g/p.appearances:0;p.aPerApp=p.appearances?p.a/p.appearances:0;p.gaPerApp=p.appearances?p.gp/p.appearances:0;p.contextList=Object.keys(p.contexts||{})});
  Object.values(w.teams).forEach(function(t){t.winRate=t.matches.length?t.wins/t.matches.length*100:0;t.gd=t.for-t.against;t.sectors=Object.keys(t.sectors);t.seasons=Object.keys(t.seasons);t.events=u.uniq(t.events)});
  w.matches.forEach(function(m){if(m.kind==='unparsed')w.issues.push({level:'error',message:'Unparsed match',raw:m.raw});if(!m.home||!m.away)w.issues.push({level:'error',message:'Missing team in match',raw:m.raw})});
  var goalPlayers=Object.values(w.players).filter(function(p){return p.g>0}).sort(function(a,b){return b.g-a.g});if(goalPlayers[0])w.records.push({label:'Top scorer',value:goalPlayers[0].name+' — '+goalPlayers[0].g+' goals'});
