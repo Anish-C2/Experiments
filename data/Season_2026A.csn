@@ -1,0 +1,538 @@
+[
+id=pc26a;
+e=Pioneer Cup;
+s=2026A;
+ed=1;
+org=SSN;
+fmt=rsk;
+t=12;
+grp=A, B, C, D;
+tgt=8;
+dos=24072026;
+doc=05082026;
+ven=School;
+lvl=Inaugural Championship;
+sts=Completed;
+
+n(
+bbu=Black Bird United[Anish],
+kko=Kolkata Kous[Bhavesh],
+nas=New Athletico Saltlake[Vyom],
+rsa=Real Saltlake[Arjun],
+mfc=Modo FC[Divyanshu],
+ssc=Super Strikers CF[Srinjoy],
+rut=Romano United[Anshuman],
+igr=Inter Grande CF[Rounak],
+mvl=Movile[Gourav],
+vos=Vostok CF[Aryan],
+hor=Horsemen United[Rajdeep],
+mar=Martians[Anirban]
+);
+
+grp(
+A>bbu,rsa,rut;
+B>nas,ssc,vos;
+C>kko,hor,mfc;
+D>mar,igr,mvl
+);
+
+m(
+# Group A;
+rsa-rut:2-1(y1-0)#GS;
+bbu-rsa:7-4#GS;
+rut-bbu:0-1#GS;
+# Group B;
+ssc-nas:2-2#GS;
+vos-ssc:3-2#GS;
+nas-vos:1-3#GS;
+# Group C;
+mfc-hor:2-3#GS;
+kko-mfc:2-2#GS;
+hor-kko:0-1#GS;
+# Group D;
+mar-igr:6-2#GS;
+mvl-mar:0-0(y1-1)#GS;
+igr-mvl:4-5#GS;
+# Quarterfinals;
+bbu-ssc:4-2#QF;
+hor-mar:1-3(y0-1,r0-1)#QF;
+kko-mvl:5-3#QF;
+rsa-vos:2-2(p2-1)#QF;
+# Semifinals;
+bbu-mar:5-2#SF;
+kko-rsa:1-1(p1-0)#SF;
+# Third Place;
+mar-rsa:0-1#TP;
+# Final;
+bbu-kko:3-3(p2-0)#F
+);
+
+aw(
+ch=bbu;
+ru=kko;
+ug=kko;
+gb=bbu;
+iw=kko;
+bg=bbu;
+gk=vos;
+frp=vos;
+3p=rsa;
+4p=mar;
+cm=bbu;
+ps=bbu;
+cp=kko;
+rb=bbu;
+gmb=bbu;
+);
+
+nt(
+Inaugural Edition
+);
+]
+
+[
+id=rc26a;
+e=Relegator Cup;
+s=2026A;
+ed=1;
+org=SSN;
+fmt=ko;
+t=4;
+tgt=4;
+dos=05082026;
+doc=07082026;
+ven=School;
+lvl=Inaugural Regular;
+grp(Na);
+sts=Completed;
+
+n(
+rut=Romano United[Anshuman],
+igr=Inter Grande CF[Rounak],
+nas=New Athletico Saltlake[Vyom],
+mfc=Modo FC[Divyanshu]
+);
+
+m(
+rut-nas:0-0(p1-2)#SF;
+mfc-igr:0-0(p2-1)#SF;
+nas-mfc:3-2#F;
+);
+
+aw(
+ch=nas;
+ru=mfc;
+gb=nas;
+gmb=nas;
+);
+
+nt(
+First ever Relegator Cup
+);
+]
+
+[
+id=csc26a;
+e=Chroma Super Cup;
+s=2026A;
+ed=1;
+org=SSN;
+fmt=ko;
+t=2;
+tgt=1;
+dos=07082026;
+doc=07082026;
+ven=School;
+sts=Completed;
+
+n(
+bbu=Black Bird United[Anish],
+nas=New Athletico Saltlake[Vyom]
+);
+
+m(
+bbu-nas:7-3(y1-0,r0-1)#F
+);
+
+aw(
+ch=bbu;
+ru=nas;
+rb=bbu;
+gmb=bbu;
+);
+
+nt(
+A Super Cup between the champions of the Relegator Cup and Pioneer Cup
+);
+]
+
+[
+id=gr26a;
+e=Grande;
+s=2026A;
+ed=1;
+org=SSN;
+fmt=ko;
+t=8;
+tgt=8;
+dos=07082026;
+doc=13082026;
+ven=School;
+sts=Completed;
+
+n(
+bbu=Black Bird United[Anish],
+kko=Kolkata Kous[Bhavesh],
+rsa=Real Saltlake[Arjun],
+ssc=Super Strikers CF[Srinjoy],
+mvl=Movile[Gourav],
+vos=Vostok CF[Aryan],
+hor=Horsemen United[Rajdeep],
+mar=Martians[Anirban]
+);
+
+m(
+kko-hor:3-3(p1-0)#QF;
+rsa-mar:3-3(p2-3)#QF;
+bbu-mvl:7-1#QF;
+ssc-vos:4-1#QF;
+bbu-ssc:8-0#SF;
+kko-mar:3-1#SF;
+ssc-mar:2-2(p3-1)#TP;
+kko-bbu:4-4(p2-1)#F;
+);
+
+aw(
+ch=kko;
+ru=bbu;
+gb=bbu;
+bg=bbu;
+pot=bbu;
+iw=bbu;
+ug=ssc;
+3p=ssc;
+4p=mar;
+gk=ssc;
+cm=kko;
+rb=bbu;
+cp=ssc;
+ps=kko;
+gmb=bbu;
+);
+
+nt(
+Direct knockout cup
+);
+]
+
+[
+id=cl26a;
+e=Conference League;
+s=2026A;
+ed=1;
+org=SSN;
+fmt=rr;
+t=4;
+dos=12082026;
+doc=14082026;
+ven=School;
+sts=Completed;
+
+n(
+rsa=Real Saltlake[Arjun],
+mvl=Movile[Gourav],
+vos=Vostok CF[Aryan],
+hor=Horsemen United[Rajdeep]
+);
+
+m(
+rsa-hor:0-0#GS;
+mvl-vos:0-1#GS;
+mvl-hor:0-1#GS;
+rsa-mvl:1-0#GS;
+rsa-vos:1-0#GS;
+vos-hor:1-0#GS;
+);
+
+aw(
+ch=rsa;
+ru=vos;
+3p=hor;
+gb=vos;
+iw=rsa;
+frp=mvl;
+gmb=rsa;
+4p=mvl;
+);
+]
+
+[
+id=prc26a;
+e=Peripheral Cup;
+s=2026A;
+ed=1;
+org=SSN;
+fmt=rr;
+t=4;
+dos=12082026;
+doc=14082026;
+ven=School;
+sts=Completed;
+
+n(
+rut=Romano United[Anshuman],
+igr=Inter Grande CF[Rounak],
+nas=New Athletico Saltlake[Vyom],
+mfc=Modo FC[Divyanshu]
+);
+
+m(
+rut-igr:1-1#GS;
+rut-nas:1-3#GS;
+rut-mfc:0-1#GS;
+igr-nas:2-2#GS;
+mfc-igr:1-3#GS;
+nas-mfc:0-0#GS;
+);
+
+aw(
+ch=igr;
+ru=nas;
+3p=mfc;
+gb=igr;
+iw=mfc;
+gmb=igr;
+frp=rut;
+);
+]
+
+[
+id=pl26a;
+e=Premier League;
+s=2026A;
+ed=1;
+org=SSN;
+fmt=rr;
+t=4;
+dos=13082026;
+doc=14082026;
+ven=School;
+sts=Completed;
+
+n(
+kko=Kolkata Kous[Bhavesh],
+bbu=Black Bird United[Anish],
+ssc=Super Strikers CF[Srinjoy],
+mar=Martians[Anirban],
+);
+
+m(
+bbu-ssc:5-2#GS;
+bbu-mar:2-1#GS;
+mar-ssc:2-2#GS;
+kko-ssc:1-0#GS;
+mar-kko:0-1#GS;
+kko-bbu:2-5#GS;
+);
+
+aw(
+ch=bbu;
+ru=kko;
+3p=mar;
+gb=bbu;
+iw=mar;
+bg=bbu;
+rb=bbu;
+gmb=bbu;
+)
+]
+
+[
+id=sc26a;
+e=SuperCup;
+s=2026A;
+ed=1;
+org=SSN;
+fmt=ko;
+t=2;
+dos=18082026;
+doc=18082026;
+ven=School;
+sts=Completed;
+
+n(
+bbu=Black Bird United[Anish],
+kko=Kolkata Kous[Bhavesh]
+);
+
+m(
+bbu-kko:1-3#F;
+);
+
+aw(
+ch=kko;
+ru=bbu;
+gmb=kko;
+);
+]
+
+[
+id=msc26a;
+e=Minor Supercup;
+s=2026A;
+ed=1;
+org=SSN;
+fmt=ko;
+t=2;
+tgt=1;
+dos=18082026;
+doc=18082026;
+ven=School;
+sts=Completed;
+
+n(
+nas=New Athletico Saltlake[Vyom],
+igr=Inter Grande CF[Rounak]
+);
+
+m(
+nas-igr:1-2#F;
+);
+
+aw(
+ch=igr;
+ru=nas;
+gmb=igr;
+);
+
+nt(
+A Super Cup between the champions of the Relegator Cup and Peripheral Cup
+);
+]
+
+[
+id=ssc26a;
+e=Sub Supercup;
+s=2026A;
+ed=1;
+org=SSN;
+fmt=ko;
+t=2;
+tgt=1;
+dos=18082026;
+doc=18082026;
+ven=School;
+sts=Completed;
+
+n(
+rsa=Real Saltlake[Arjun],
+igr=Inter Grande CF[Rounak]
+);
+
+m(
+rsa-igr:1-0#F;
+);
+
+aw(
+ch=rsa;
+ru=igr;
+gmb=rsa;
+);
+
+nt(
+A Super Cup between the champions of the Conference League and Minor Supercup
+);
+]
+
+[
+id=fn26a;
+e=Finale;
+s=2026A;
+ed=1;
+org=SSN;
+fmt=ko;
+t=4;
+tgt=1;
+dos=19082026;
+doc=21082026;
+ven=School;
+sts=Completed;
+tag=golden;
+
+n(
+bbu=Black Bird United[Anish],
+ssc=Super Strikers CF[Srinjoy],
+kko=Kolkata Kous[Bhavesh],
+rsa=Real Saltlake[Arjun]
+);
+
+m(
+# Semifinals;
+bbu-ssc:3-3(p2-1)#SF;
+kko-rsa:0-1#SF;
+# Finals;
+bbu-rsa:1-1(p2-0)#F;
+);
+
+aw(
+ch=bbu;
+ru=rsa;
+gmb=bbu;
+3p=ssc;
+4p=kko;
+ps=bbu;
+gb=bbu;
+iw=rsa;
+cp=rsa;
+cm=bbu;
+);
+
+nt(
+The concluding championship of the 2026A season.
+);
+]
+
+[
+id=sa26a;
+e=Seasonal Awards;
+s=2026A;
+typ=seasonal;
+sts=Completed;
+
+aw(
+Tsar=Anish;
+Crown Of CASPER=Anish;
+Golden Strike=Anish;
+Netherite=Arjun;
+gg=Arjun;
+The Standard=Anish;
+The Margin=Anish;
+The Pursuer=Bhavesh;
+The Wall=Anshuman;
+Silver Strike=Bhavesh;
+The Edge=Bhavesh;
+The Lock=Divyanshu;
+The Runner=Aryan;
+Lowest Exposure=Anshuman;
+Season Points Leader=Anish;
+sg=Anish;
+);
+
+ranks(
+1=Anish:23,
+2=Arjun:10,
+3=Bhavesh:9,
+4=Anirban:5,
+5=Gourav:3,
+6=Rounak:2,
+7=Srinjoy:2,
+8=Vyom:1,
+9=Aryan:1,
+10=Rajdeep:1,
+11=Divyanshu:1
+)
+
+nt(
+End of Season 2026A awards.
+)
+]
