@@ -1,0 +1,17 @@
+{
+  "_comment": "clubs is a list of club codes. One player may own two or more clubs. Stats still come from CSN.",
+  "anish": { "name": "Anish", "clubs": ["bbu"], "country": "India", "position": "Forward / Pivot", "foot": "Right", "status": "Active", "sports": ["futsal", "football", "cricket"], "id": "CAS-PL-0007" },
+  "bhavesh": { "name": "Bhavesh", "clubs": ["kko"], "country": "India", "position": "Forward", "status": "Active", "sports": ["futsal"], "id": "CAS-PL-0002" },
+  "arjun": { "name": "Arjun", "clubs": ["rsa"], "country": "India", "position": "Defender", "status": "Active", "sports": ["futsal", "football"], "id": "CAS-PL-0003" },
+  "anirban": { "name": "Anirban", "clubs": ["mar"], "country": "India", "position": "Forward", "status": "Active", "sports": ["futsal", "football", "cricket"], "id": "CAS-PL-0004" },
+  "srinjoy": { "name": "Srinjoy", "clubs": ["ssc"], "country": "India", "position": "Midfield", "status": "Active", "sports": ["futsal", "football", "cricket"], "id": "CAS-PL-0005" },
+  "vyom": { "name": "Vyom", "clubs": ["nas"], "country": "India", "position": "Forward", "status": "Active", "sports": ["futsal", "cricket"], "id": "CAS-PL-0006" },
+  "rounak": { "name": "Rounak", "clubs": ["igr"], "country": "India", "status": "Active", "sports": ["futsal"], "id": "CAS-PL-0008" },
+  "aryan": { "name": "Aryan", "clubs": ["vos"], "country": "India", "status": "Active", "sports": ["futsal"], "id": "CAS-PL-0009" },
+  "gourav": { "name": "Gourav", "clubs": ["mvl"], "country": "India", "status": "Active", "sports": ["futsal", "football"], "id": "CAS-PL-0010" },
+  "divyanshu": { "name": "Divyanshu", "clubs": ["mfc"], "country": "India", "status": "Active", "sports": ["futsal", "football"], "id": "CAS-PL-0011" },
+  "rajdeep": { "name": "Rajdeep", "clubs": ["hor"], "country": "India", "status": "Active", "sports": ["futsal", "football"], "id": "CAS-PL-0012" },
+  "anshuman": { "name": "Anshuman", "clubs": ["rut"], "country": "India", "status": "Active", "sports": ["futsal", "football"], "id": "CAS-PL-0013" },
+  "aarav": { "name": "Aarav", "clubs": ["rsa"], "country": "India", "status": "Active", "sports": ["football"], "id": "CAS-PL-0014" },
+  "karan": { "name": "Karan", "clubs": [], "country": "India", "status": "Active", "sports": [], "id": "CAS-PL-0015" }
+}
