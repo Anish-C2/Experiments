@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "sites": [
+    {
+      "name": "CASPER",
+      "path": "otter/casper/index.mrc"
+    },
+    {
+      "name": "Maths",
+      "path": "otter/maths/index.mrc"
+    },
+    {
+      "name": "School Bad",
+      "path": "otter/school/index.mrc"
+    }
+  ]
+}
