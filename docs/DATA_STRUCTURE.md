@@ -3,12 +3,13 @@
 CASPER separates **entity data** from **sporting event data**.
 
 - JSON registries store who and what exists.
-- CSN stores what happened in competitions and matches.
-- The application/engine joins the two using General IDs.
+- CSN/archive data stores what happened in competitions and matches.
+- The application joins the two using General IDs.
+- Derived statistics are presentation/calculation data, not identity data.
 
 ## Sector model
 
-A **Sector** is a geographical area in which CASPER operates remotely. A Sector is not simply an organisational department; it is a regional sporting jurisdiction containing clubs, players, competitions and sporting activity.
+A **Sector** is a geographical area in which CASPER operates remotely. A Sector is a regional sporting jurisdiction containing clubs, players, competitions and sporting activity.
 
 A useful analogy is:
 
@@ -22,8 +23,6 @@ Sector 04    → France
 
 The names above are only an analogy. Actual CASPER sectors may represent any geographical operating area defined by CASPER.
 
-The hierarchy is therefore:
-
 ```text
 CASPER
  ├── SECTOR 01
@@ -36,28 +35,41 @@ CASPER
  └── SECTOR N
 ```
 
-Entities can participate across sectors where the registry explicitly permits it. The sector is the primary geographical context for CASPER statistics and competition discovery.
+The Sector is the primary geographical context for CASPER statistics and competition discovery.
 
-## Core registries
-
-The initial registry layer contains three files:
+## Current repository data layer
 
 ```text
-player-registry.json
-clubs.json
-sectors.json
+ data/
+ ├── sectors.json
+ ├── clubs.json
+ ├── player-registry.json
+ ├── competitions.json
+ └── dashboard.json
+
+ archive/
+ └── 2026A/
+     └── matches.csn
 ```
 
-### Player registry
+Each JSON file has a top-level `schema`, `version`, and `updated` field. This makes later schema changes explicit instead of silently changing the meaning of old files.
+
+`dashboard.json` is intentionally marked `mock: true`. It is the temporary homepage presentation snapshot while the full historical archive is assembled. It must not be treated as official CASPER statistics.
+
+## Player registry
 
 ```json
 {
+  "schema": "casper.players",
+  "version": 1,
+  "updated": "2026-09-10",
   "players": [
     {
+      "nickname": "xen",
       "name": "Example Player",
       "birthyear": 2012,
-      "clubs": ["abc"],
-      "nickname": "xen",
+      "club": "abc",
+      "sector": "SSN",
       "sectors": ["SSN"],
       "date_registered": "2026-09-10"
     }
@@ -65,54 +77,71 @@ sectors.json
 }
 ```
 
-### Club registry
+A player's `nickname` is the unique 3-letter General ID. Names do not need to be unique.
+
+## Club registry
 
 ```json
 {
+  "schema": "casper.clubs",
+  "version": 1,
+  "updated": "2026-09-10",
   "clubs": [
     {
-      "name": "Example Club",
       "nickname": "abc",
-      "sectors": ["SSN"],
-      "date_registered": "2026-09-10"
+      "name": "Example Club",
+      "sector": "SSN"
     }
   ]
 }
 ```
 
-### Sector registry
+## Sector registry
 
 ```json
 {
+  "schema": "casper.sectors",
+  "version": 1,
+  "updated": "2026-09-10",
   "sectors": [
     {
-      "name": "Example Sector",
       "nickname": "SSN",
-      "date_registered": "2026-09-10"
+      "name": "Example Sector",
+      "region": "Example Region",
+      "status": "active"
     }
   ]
 }
 ```
+
+## Competition registry
+
+Competitions are entities too. Their registry entry identifies the competition without forcing every competition to share the same sporting format.
+
+```json
+{
+  "nickname": "SSNFB",
+  "name": "SSN Premier Division",
+  "sector": "SSN",
+  "sport": "football",
+  "type": "league",
+  "season": "2026A",
+  "status": "active"
+}
+```
+
+The competition record can later point into its CSN archive for its actual structure and results.
 
 ## General IDs
 
-CASPER uses compact **General IDs** as references between records.
+CASPER uses compact General IDs as references between records.
 
-### Player IDs
+- Player General ID: unique 3-letter nickname.
+- Club General ID: registered club nickname.
+- Sector General ID: registered sector nickname.
+- Competition General ID: registered competition nickname.
 
-A player's `nickname` is a unique **3-letter General ID** among registered players.
-
-Names do not have to be unique. Two players can have the same name as long as their General IDs are different.
-
-The nickname is intended to remain stable during normal profile edits so historical CSN records continue to resolve correctly.
-
-### Club IDs
-
-Clubs use their registered nickname as their General ID.
-
-### Sector IDs
-
-Sectors use their registered nickname as their General ID.
+These IDs are references, not hashes and not cryptographic identities.
 
 ## Sporting statistics
 
@@ -124,83 +153,73 @@ FUTSAL   → goals
 CRICSAL  → runs + wickets
 ```
 
-Football and futsal goals are tracked separately even though both are goal-based sports. A football goal total must not include futsal goals.
-
-Cricsal is represented using its own scoring model. Its primary match/player statistics are **runs** and **wickets**, not goals. Cricsal runs and wickets must therefore have dedicated fields, labels and leaderboards in the application.
-
-Cross-sport pages may show multiple sport totals, but each value must retain its sport context.
+Football and futsal goals remain separate. Cricsal never uses a goal field for its primary scoring statistics.
 
 ## Relationships
 
-Registry relationships are represented by General IDs rather than copied objects.
-
-A player can belong to multiple clubs over time, and a club can have multiple players. Players and clubs can be associated with sectors as defined by the registry.
-
-Conceptually:
-
 ```text
-PLAYER ──< CLUB
-   │
-   └──< SECTOR
-          │
-          ├──< CLUB
-          ├──< PLAYER
-          └──< COMPETITION
+PLAYER ──→ CLUB ──→ SECTOR
+                  │
+                  └──→ COMPETITION
+
+COMPETITION ──→ SEASON ──→ MATCH / CSN
 ```
+
+Relationships should be represented by General IDs rather than copied profile objects.
 
 ## Source of truth
 
 | Data | Source |
 |---|---|
-| Player profile | `player-registry.json` |
-| Club profile | `clubs.json` |
-| Sector profile | `sectors.json` |
-| Match events | CSN |
-| Competition structure | CSN |
-| Standings | Derived from CSN |
-| Football statistics | Derived from CSN |
-| Futsal statistics | Derived from CSN |
-| Cricsal runs/wickets | Derived from CSN |
-| Records | Derived from CSN |
+| Player identity/profile | `data/player-registry.json` |
+| Club identity/profile | `data/clubs.json` |
+| Sector identity/profile | `data/sectors.json` |
+| Competition identity/metadata | `data/competitions.json` |
+| Match events | CSN under `archive/` |
+| Standings | Derived from competition rules + match data |
+| Football statistics | Derived from football match data |
+| Futsal statistics | Derived from futsal match data |
+| Cricsal runs/wickets | Derived from Cricsal match data |
+| Records | Derived from archived sporting data |
+| Homepage mock totals | `data/dashboard.json` until the real archive is connected |
 
-## Derived data
+## Data flow
 
-The application should calculate statistics from registered entities and CSN records wherever possible.
+```text
+registries + archive
+        ↓
+    data loader
+        ↓
+     validator
+        ↓
+ ID/reference resolution
+        ↓
+ statistics / standings
+        ↓
+     page renderers
+```
 
-Examples include:
-
-- sector totals
-- matches played
-- wins, draws, and losses
-- football goals for and against
-- futsal goals for and against
-- goal difference within the relevant sport
-- Cricsal runs
-- Cricsal wickets
-- player goals and assists for football/futsal
-- player runs and wickets for Cricsal
-- cards and disciplinary totals
-- competition records
-- historical records
+No page should become the source of truth for a statistic.
 
 ## Validation
 
-A registry loader should validate at least:
+At minimum, the loader validates:
 
-1. Required fields exist.
-2. Player General IDs are exactly three letters.
-3. Player General IDs are unique.
-4. Club General IDs are unique.
-5. Sector General IDs are unique.
-6. Referenced club IDs exist.
-7. Referenced sector IDs exist.
-8. CSN entity references resolve to registered General IDs.
-9. Sport-specific statistics are stored and displayed under the correct sport.
+1. required registry containers exist;
+2. General IDs are unique within their registry;
+3. club → Sector references resolve;
+4. player → club and player → Sector references resolve;
+5. competition → Sector references resolve;
+6. competition sports are supported;
+7. dashboard numeric statistics are non-negative;
+8. sport-specific fields remain under the correct sport.
+
+The full validation policy is documented in [Data Validation](./DATA_VALIDATION.md).
 
 ## Intentional simplicity
 
 CASPER does **not** use a cryptographic identity layer, hash-based player identity, or permanent numeric player ID in this model.
 
-The goal is a small, understandable registry system that works cleanly with CSN and can be extended as CASPER grows.
+The objective is a small registry model with a strong archival boundary and predictable references.
 
-For the event notation itself, see [CSN](./CSN.md).
+For application architecture, see [Architecture](./ARCHITECTURE.md). For notation, see [CSN](./CSN.md).
