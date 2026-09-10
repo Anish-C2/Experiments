@@ -1,6 +1,6 @@
 # CASPER Application Architecture
 
-CASPER is a static statistical database UI. The product priorities are **UI quality** and **data correctness**. The repository therefore separates source data from rendering while keeping the implementation deliberately understandable.
+CASPER is a static statistical database UI. The product priorities are **UI quality** and **data correctness**. The repository separates source data from rendering while keeping the implementation deliberately understandable.
 
 ## Source flow
 
@@ -21,6 +21,26 @@ JSON registries + presentation snapshot
                  |
              shared CSS
 ```
+
+## Statistical coverage
+
+All public data pages now expose a statistical snapshot rather than stopping at identity metadata.
+
+| Page | Statistical layer |
+|---|---|
+| Home | network-wide sport totals, sectors, clubs, players, results and form |
+| Sectors | network totals plus per-sector football, futsal and Cricsal splits |
+| Sector profile | sector totals, recent form and three sport blocks |
+| Clubs | registry totals plus table/rating context for each club |
+| Club profile | squad size, football record, ELO, sport-specific match-derived splits and squad production |
+| Players | network sport totals plus player production in directory rows |
+| Player profile | identity strip plus every available sport-specific performance row |
+| Competitions | competition counts by sport/status plus result availability |
+| Competition profile | linked matches, participants and sport-specific competition metrics |
+| Match Centre | result count plus football/futsal/Cricsal statistical totals and sport filtering |
+| Records | network sport snapshot plus record board and sport blocks |
+
+The UI deliberately uses normal readable text and gains density through layout, grouping and stat strips rather than tiny typography.
 
 ## Entity sources
 
@@ -46,7 +66,7 @@ Homepage renderer. It owns no registry data.
 
 ### `js/pages.js`
 
-Shared renderer for Sector, Club, Player and Competition directories/profiles. Query-string General IDs select detail records.
+Shared renderer for Sector, Club, Player and Competition directories/profiles. It now also provides the shared statistical helper layer, sport-separated result aggregation, competition-ID normalization for presentation data, and statistical directory rows.
 
 ## Pages
 
@@ -60,7 +80,7 @@ Shared renderer for Sector, Club, Player and Competition directories/profiles. Q
 - `competitions.html` — searchable Competition directory.
 - `competition.html?id=SSNFB` — Competition profile.
 - `matches.html` — Match Centre / result archive view.
-- `records.html` — sport-separated records.
+- `records.html` — sport-separated records and network statistical snapshot.
 - `docs.html` — automatic Markdown documentation browser.
 
 ## Shared styling
@@ -83,6 +103,10 @@ A cross-sport dashboard may display these values together, but it must never sil
 
 Pages render data; they do not become alternate databases. Identity belongs in registries. Sporting events belong in CSN/archive. Derived statistics should eventually be calculated from those records.
 
+## Mock-data rule
+
+`dashboard.json` is currently a presentation snapshot and is explicitly marked `mock: true`. UI values sourced from it are useful for finalizing layout, but they are not promoted to authoritative historical records. When the official archive is populated, calculated values should replace the snapshot values.
+
 ## Robustness rule
 
-A broken reference should be visible as a data error rather than silently converted into a plausible-looking value. This is especially important once real historical records replace the mock dashboard.
+A broken reference should be visible as a data error rather than silently converted into a plausible-looking value. Sport-specific aggregation must reject invalid numeric scores and never use a football/futsal goal field for Cricsal or vice versa.
