@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CASPER — Competitive Athletics & Sports Promotion</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#home"><span class="brand-mark">C</span><span>CASPER</span></a>
+    <nav>
+      <a href="#home">Home</a><a href="#competitions">Competitions</a><a href="#clubs">Clubs</a><a href="#players">Players</a><a href="#sectors">Sectors</a>
+    </nav>
+    <button class="search" aria-label="Search">⌕</button>
+  </header>
+
+  <main id="home">
+    <section class="hero">
+      <div class="eyebrow">COMPETITIVE ATHLETICS & SPORTS PROMOTION</div>
+      <h1>The sporting record,<br><em>properly kept.</em></h1>
+      <p>Competition data, clubs, players and sporting history — organized in one place.</p>
+      <div class="hero-actions"><a class="button primary" href="#competitions">Explore competitions</a><a class="button ghost" href="#players">Browse players</a></div>
+    </section>
+
+    <section class="section" id="competitions">
+      <div class="section-head"><div><span class="kicker">CURRENT</span><h2>Competitions</h2></div><a href="#">View all →</a></div>
+      <div id="competition-grid" class="competition-grid"></div>
+    </section>
+
+    <section class="split section">
+      <div id="clubs" class="panel"><div class="section-head"><div><span class="kicker">RANKINGS</span><h2>Club table</h2></div></div><div id="club-table"></div></div>
+      <div id="players" class="panel"><div class="section-head"><div><span class="kicker">LEADERS</span><h2>Player leaders</h2></div></div><div id="player-list"></div></div>
+    </section>
+
+    <section class="section" id="sectors">
+      <div class="section-head"><div><span class="kicker">NETWORK</span><h2>Sectors</h2></div></div>
+      <div id="sector-grid" class="sector-grid"></div>
+    </section>
+  </main>
+
+  <footer><strong>CASPER</strong><span>Competitive Athletics & Sports Promotion</span><span>Data-driven. Competition-first.</span></footer>
+  <script src="js/app.js"></script>
+</body>
+</html>
