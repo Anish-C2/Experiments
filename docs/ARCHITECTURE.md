@@ -1,85 +1,88 @@
 # CASPER Application Architecture
 
-CASPER is intentionally a static-site application: the repository contains the registries, archived sporting records, presentation layer, and calculation logic. The browser assembles the site from those sources.
+CASPER is a static statistical database UI. The product priorities are **UI quality** and **data correctness**. The repository therefore separates source data from rendering while keeping the implementation deliberately understandable.
 
-## Source layers
+## Source flow
 
 ```text
-JSON registries
-    ↓
-central data loader
-    ↓
-validation + reference resolution
-    ↓
-dashboard/statistics data
-    ↓
-rendering
-    ↓
-HTML pages
+JSON registries + presentation snapshot
+                 +
+             CSN archive
+                 |
+            js/data.js
+                 |
+        validation / references
+                 |
+          normalized data
+          /            \
+     js/app.js       js/pages.js
+        |                 |
+      HOME       directories + profiles
+                 |
+             shared CSS
 ```
 
-### Entity registries
+## Entity sources
 
 - `data/sectors.json` — Sector identity and geographic operating context.
 - `data/clubs.json` — Club identity and current sector membership.
 - `data/player-registry.json` — Player identity and current club/sector context.
-- `data/competitions.json` — Competition identity, sport, sector, type and season metadata.
+- `data/competitions.json` — Competition identity, sport, sector, type and season.
+- `data/dashboard.json` — temporary mock presentation values while the real archive is assembled.
 
-### Presentation snapshot
+## Archive
 
-`data/dashboard.json` contains the current **mock UI dataset** used to populate the homepage while CASPER's real archive is being assembled. It is deliberately separate from entity registries so mock presentation values cannot be mistaken for identity records.
+`archive/` stores historical sporting records. Archived sporting events are intended to become the authoritative input for calculated statistics. The first demonstration ledger is under `archive/2026A/`.
 
-The file is marked with `mock: true`.
-
-### Archive
-
-`archive/` is reserved for historical sporting records. The first demonstration ledger is under `archive/2026A/`.
-
-## JavaScript responsibilities
+## JavaScript
 
 ### `js/data.js`
 
-The single entry point for application data. It:
-
-1. loads every required JSON source;
-2. caches each source for the current page load;
-3. checks schema containers;
-4. checks General ID uniqueness;
-5. validates sector, club and competition references;
-6. validates supported sport names;
-7. returns one normalized application object.
+Shared data entry point. It fetches all required JSON sources, caches the normalized result for the current page, validates General IDs and references, checks supported sports, and exposes validation status.
 
 ### `js/app.js`
 
-Presentation only. It receives the validated data object and renders the homepage. It does not own the registry data.
+Homepage renderer. It owns no registry data.
 
-This separation means a page can be redesigned without rewriting the data sources.
+### `js/pages.js`
 
-## Rendering contract
+Shared renderer for Sector, Club, Player and Competition directories/profiles. Query-string General IDs select detail records.
 
-Pages should consume resolved entities instead of embedding repeated identity information. For example, a club table row stores `NSR` and resolves its display name through `clubs.json`.
+## Pages
 
-The same principle applies to players, sectors and competitions.
-
-## Sport boundaries
-
-CASPER statistics preserve sport context:
-
-- Football → goals
-- Futsal → goals
-- Cricsal → runs + wickets
-
-No generic cross-sport `goals` total is used.
+- `index.html` — network dashboard.
+- `sectors.html` — Sector directory.
+- `sector.html?id=SSN` — Sector profile.
+- `clubs.html` — searchable Club directory.
+- `club.html?id=NSR` — Club profile.
+- `players.html` — searchable Player directory.
+- `player.html?id=EXP` — Player profile.
+- `competitions.html` — searchable Competition directory.
+- `competition.html?id=SSNFB` — Competition profile.
+- `matches.html` — Match Centre / result archive view.
+- `records.html` — sport-separated records.
+- `docs.html` — automatic Markdown documentation browser.
 
 ## Shared styling
 
-All pages use `css/style.css`. Page-specific HTML supplies structure; the shared stylesheet owns typography, spacing, panels, tables, responsive behavior and documentation styling.
+Every page links to `css/style.css`. There is no page-specific stylesheet. The single stylesheet owns navigation, typography, layout, tables, cards, documentation styling and responsive behavior.
 
-## Robustness goals
+## Sport boundaries
 
-The architecture is optimized around two priorities:
+Statistics always retain sport context:
 
-1. **UI consistency** — one visual system across CASPER pages.
-2. **Data correctness** — data lives outside presentation code and references are validated before rendering.
+```text
+FOOTBALL → goals
+FUTSAL   → goals
+CRICSAL  → runs + wickets
+```
 
-Future pages should use the same loader rather than creating their own data objects.
+A cross-sport dashboard may display these values together, but it must never silently merge them into one statistic.
+
+## Data rule
+
+Pages render data; they do not become alternate databases. Identity belongs in registries. Sporting events belong in CSN/archive. Derived statistics should eventually be calculated from those records.
+
+## Robustness rule
+
+A broken reference should be visible as a data error rather than silently converted into a plausible-looking value. This is especially important once real historical records replace the mock dashboard.
