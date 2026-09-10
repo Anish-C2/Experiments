@@ -1,0 +1,13 @@
+{
+  "schema": "casper.clubs",
+  "version": 1,
+  "updated": "2026-09-10",
+  "clubs": [
+    {"nickname":"NSR","name":"NSR FC","sector":"SSN"},
+    {"nickname":"EAS","name":"EAS United","sector":"OSA"},
+    {"nickname":"RIV","name":"RIV City","sector":"CFA"},
+    {"nickname":"SOU","name":"SOU Athletic","sector":"CSA"},
+    {"nickname":"NXI","name":"North XI","sector":"SSN"},
+    {"nickname":"EFC","name":"East FC","sector":"OSA"}
+  ]
+}
