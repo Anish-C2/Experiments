@@ -14,21 +14,16 @@ const CASPER_DATA = (() => {
   const isNum = v => typeof v === 'number' && Number.isFinite(v);
   const nonNeg = v => isNum(v) && v >= 0;
 
-  function emptySport(sport) {
+  function emptySport() {
     return { goals: 0, runs: 0, wickets: 0, matches: 0, average: 0 };
   }
 
   function emptyPack() {
     return {
       form: '—',
-      sports: Object.fromEntries(SPORTS.map(s => [s, emptySport(s)])),
-      clubTable: [],
-      playerStats: [],
-      results: [],
-      records: [],
-      clubs: 0,
-      players: 0,
-      competitions: 0
+      sports: Object.fromEntries(SPORTS.map(s => [s, emptySport()])),
+      clubTable: [], playerStats: [], results: [], records: [],
+      clubs: 0, players: 0, competitions: 0
     };
   }
 
@@ -50,18 +45,16 @@ const CASPER_DATA = (() => {
   }
 
   function readSportBlock(raw, sport, path, errors) {
-    const out = emptySport(sport);
+    const out = emptySport();
     if (!raw || typeof raw !== 'object') return out;
     const take = (field) => {
       if (raw[field] == null) return;
       if (!nonNeg(raw[field])) errors.push(`${path}.${field} must be a non-negative number`);
       else out[field] = raw[field];
     };
-    take('matches');
-    take('average');
+    take('matches'); take('average');
     if (sport === 'cricsal') {
-      take('runs');
-      take('wickets');
+      take('runs'); take('wickets');
       if (raw.goals != null) errors.push(`${path}: cricsal must not use a goals field`);
     } else {
       take('goals');
@@ -73,9 +66,9 @@ const CASPER_DATA = (() => {
   function addSports(a, b) {
     const out = {};
     for (const sport of SPORTS) {
-      const x = a[sport] || emptySport(sport);
-      const y = b[sport] || emptySport(sport);
-      const block = emptySport(sport);
+      const x = a[sport] || emptySport();
+      const y = b[sport] || emptySport();
+      const block = emptySport();
       block.matches = x.matches + y.matches;
       if (sport === 'cricsal') {
         block.runs = x.runs + y.runs;
@@ -93,30 +86,18 @@ const CASPER_DATA = (() => {
   async function fetchJSON(path) {
     const r = await fetch(`${path}?v=${Date.now()}`, { cache: 'no-store' });
     if (!r.ok) throw new Error(`${path} returned HTTP ${r.status}`);
-    try {
-      return await r.json();
-    } catch {
-      throw new Error(`${path} is not valid JSON`);
-    }
+    try { return await r.json(); }
+    catch { throw new Error(`${path} is not valid JSON`); }
   }
 
   function flattenLegacyDashboard(raw, errors) {
-    if (raw?.sectors && typeof raw.sectors === 'object' && !Array.isArray(raw.sectors)) {
-      return raw.sectors;
-    }
+    if (raw?.sectors && typeof raw.sectors === 'object' && !Array.isArray(raw.sectors)) return raw.sectors;
     const out = {};
     const stats = raw?.sectorStats || {};
     const clubTable = Array.isArray(raw?.clubTable) ? raw.clubTable : [];
     const results = Array.isArray(raw?.results) ? raw.results : [];
     for (const [id, pack] of Object.entries(stats)) {
-      out[id] = {
-        form: pack.form || '—',
-        sports: pack.sports || {},
-        clubTable: [],
-        playerStats: [],
-        results: [],
-        records: []
-      };
+      out[id] = { form: pack.form || '—', sports: pack.sports || {}, clubTable: [], playerStats: [], results: [], records: [] };
     }
     if (!Object.keys(out).length && (clubTable.length || results.length)) {
       errors.push('dashboard: legacy snapshot has tables/results but no sectorStats');
@@ -125,37 +106,25 @@ const CASPER_DATA = (() => {
   }
 
   function normalizeDashboard(raw, registries, errors, warnings) {
-    if (!raw || typeof raw !== 'object') {
-      errors.push('dashboard: missing object');
-      raw = { mock: true, sectors: {} };
-    }
+    if (!raw || typeof raw !== 'object') { errors.push('dashboard: missing object'); raw = { mock: true, sectors: {} }; }
     if (!raw.schema) warnings.push('dashboard: missing schema');
     if (raw.mock) warnings.push('Dashboard data is marked mock');
-
     const sectorMap = indexBy(registries.sectors);
     const clubMap = indexBy(registries.clubs);
     const playerMap = indexBy(registries.players);
     const competitionMap = indexBy(registries.competitions);
     const packs = flattenLegacyDashboard(raw, errors);
     const bySector = {};
-
     for (const sector of registries.sectors) {
       const id = sector.nickname;
       const pack = packs[id] || packs[Object.keys(packs).find(k => key(k) === key(id))] || {};
       const sports = {};
-      for (const sport of SPORTS) {
-        sports[sport] = readSportBlock(pack.sports?.[sport], sport, `dashboard.sectors.${id}.sports.${sport}`, errors);
-      }
+      for (const sport of SPORTS) sports[sport] = readSportBlock(pack.sports?.[sport], sport, `dashboard.sectors.${id}.sports.${sport}`, errors);
       const clubTable = (Array.isArray(pack.clubTable) ? pack.clubTable : []).map((row, i) => {
         if (!row?.club) errors.push(`dashboard.sectors.${id}.clubTable[${i}]: missing club`);
         else if (!clubMap.has(key(row.club))) errors.push(`dashboard.sectors.${id}.clubTable: unknown club ${row.club}`);
-        else if (key(clubMap.get(key(row.club)).sector) !== key(id)) {
-          warnings.push(`dashboard.sectors.${id}.clubTable: club ${row.club} belongs to ${clubMap.get(key(row.club)).sector}`);
-        }
-        ['p', 'w', 'd', 'l', 'gf', 'ga', 'elo'].forEach(field => {
-          if (row[field] != null && !nonNeg(row[field])) {
-            errors.push(`dashboard.sectors.${id}.clubTable.${row.club}.${field} invalid`);
-          }
+        ['p','w','d','l','gf','ga','elo'].forEach(field => {
+          if (row[field] != null && !nonNeg(row[field])) errors.push(`dashboard.sectors.${id}.clubTable.${row.club}.${field} invalid`);
         });
         if (row.gd != null && !isNum(row.gd)) errors.push(`dashboard.sectors.${id}.clubTable.${row.club}.gd invalid`);
         return { ...row, sector: id };
@@ -164,7 +133,7 @@ const CASPER_DATA = (() => {
         if (!row?.player) errors.push(`dashboard.sectors.${id}.playerStats[${i}]: missing player`);
         else if (!playerMap.has(key(row.player))) errors.push(`dashboard.sectors.${id}.playerStats: unknown player ${row.player}`);
         if (row.sport && !SPORTS.includes(row.sport)) errors.push(`dashboard.sectors.${id}.playerStats.${row.player}: invalid sport ${row.sport}`);
-        ['primary', 'secondary', 'apps', 'discipline'].forEach(field => {
+        ['primary','secondary','apps','discipline'].forEach(field => {
           if (row[field] != null && !nonNeg(row[field])) errors.push(`dashboard.sectors.${id}.playerStats.${row.player}.${field} invalid`);
         });
         return { ...row, sector: id };
@@ -174,38 +143,24 @@ const CASPER_DATA = (() => {
         if (!SPORTS.includes(row?.sport)) errors.push(`${path}: invalid or missing sport`);
         if (row?.home && !clubMap.has(key(row.home))) errors.push(`${path}: unknown home club ${row.home}`);
         if (row?.away && !clubMap.has(key(row.away))) errors.push(`${path}: unknown away club ${row.away}`);
-        if (row?.competition && !competitionMap.has(key(row.competition))) {
-          errors.push(`${path}: unknown competition ${row.competition}`);
-        } else if (row?.competition) {
+        if (row?.competition && !competitionMap.has(key(row.competition))) errors.push(`${path}: unknown competition ${row.competition}`);
+        else if (row?.competition) {
           const competition = competitionMap.get(key(row.competition));
-          if (row.sport && competition.sport && row.sport !== competition.sport) {
-            errors.push(`${path}: sport ${row.sport} does not match competition sport ${competition.sport}`);
-          }
+          if (row.sport && competition.sport && row.sport !== competition.sport) errors.push(`${path}: sport ${row.sport} does not match competition sport ${competition.sport}`);
         }
-        if (row?.score && !/^\d+\s*[–-]\s*\d+$/.test(String(row.score))) {
-          errors.push(`${path}: score must look like 3–1`);
-        }
+        if (row?.score && !/^\d+\s*[–-]\s*\d+$/.test(String(row.score))) errors.push(`${path}: score must look like 3–1`);
         return { ...row, sector: id };
       });
-      const records = Array.isArray(pack.records) ? pack.records : [];
       bySector[id] = {
-        form: pack.form || '—',
-        sports,
-        clubTable,
-        playerStats,
-        results,
-        records,
+        form: pack.form || '—', sports, clubTable, playerStats, results,
+        records: Array.isArray(pack.records) ? pack.records : [],
         clubs: registries.clubs.filter(c => key(c.sector) === key(id)).length,
         players: registries.players.filter(p => key(p.sector) === key(id)).length,
         competitions: registries.competitions.filter(c => key(c.sector) === key(id)).length
       };
     }
-
-    for (const id of Object.keys(packs)) {
-      if (!sectorMap.has(key(id))) errors.push(`dashboard: unknown sector pack ${id}`);
-    }
-
-    const networkSports = Object.values(bySector).reduce((acc, pack) => addSports(acc, pack.sports), Object.fromEntries(SPORTS.map(s => [s, emptySport(s)])));
+    for (const id of Object.keys(packs)) if (!sectorMap.has(key(id))) errors.push(`dashboard: unknown sector pack ${id}`);
+    const networkSports = Object.values(bySector).reduce((acc, pack) => addSports(acc, pack.sports), Object.fromEntries(SPORTS.map(s => [s, emptySport()])));
     const network = {
       sectors: registries.sectors.length,
       active: registries.sectors.filter(s => s.status === 'active').length,
@@ -219,7 +174,6 @@ const CASPER_DATA = (() => {
       records: registries.sectors.flatMap(s => bySector[s.nickname].records),
       form: registries.sectors.map(s => ({ sector: s.nickname, form: bySector[s.nickname].form, average: bySector[s.nickname].sports.football.average }))
     };
-
     return { raw, bySector, network, mock: !!raw.mock };
   }
 
@@ -241,8 +195,7 @@ const CASPER_DATA = (() => {
     sectors.forEach(x => { if (!x.name) errors.push(`sector ${x.nickname}: missing name`); });
     clubs.forEach(x => {
       if (!x.name) errors.push(`club ${x.nickname}: missing name`);
-      const refs = x.sectors || [x.sector];
-      refs.filter(Boolean).forEach(s => { if (!sid.has(key(s))) errors.push(`club ${x.nickname}: unknown sector ${s}`); });
+      (x.sectors || [x.sector]).filter(Boolean).forEach(s => { if (!sid.has(key(s))) errors.push(`club ${x.nickname}: unknown sector ${s}`); });
       if (!x.sector && !(x.sectors || []).length) errors.push(`club ${x.nickname}: missing sector`);
     });
     players.forEach(x => {
@@ -260,73 +213,37 @@ const CASPER_DATA = (() => {
 
   function scope(model, sectorId) {
     if (!sectorId || key(sectorId) === 'all') {
-      return {
-        id: 'ALL',
-        label: 'NETWORK',
-        sectors: model.sectors,
-        clubs: model.clubs,
-        players: model.players,
-        competitions: model.competitions,
-        sports: model.network.sports,
-        clubTable: model.network.clubTable,
-        playerStats: model.network.playerStats,
-        results: model.network.results,
-        records: model.network.records,
-        form: model.network.form,
-        counts: {
-          sectors: model.network.sectors,
-          active: model.network.active,
-          clubs: model.network.clubs,
-          players: model.network.players,
-          competitions: model.network.competitions
-        }
-      };
+      return { id: 'ALL', label: 'NETWORK', sectors: model.sectors, clubs: model.clubs, players: model.players, competitions: model.competitions, sports: model.network.sports, clubTable: model.network.clubTable, playerStats: model.network.playerStats, results: model.network.results, records: model.network.records, form: model.network.form, counts: { sectors: model.network.sectors, active: model.network.active, clubs: model.network.clubs, players: model.network.players, competitions: model.network.competitions } };
     }
     const sector = model.indexes.sector.get(key(sectorId));
     if (!sector) return null;
     const pack = model.bySector[sector.nickname] || emptyPack();
-    return {
-      id: sector.nickname,
-      label: sector.name,
-      sector,
-      sectors: [sector],
-      clubs: model.clubs.filter(c => key(c.sector) === key(sector.nickname)),
-      players: model.players.filter(p => key(p.sector) === key(sector.nickname)),
-      competitions: model.competitions.filter(c => key(c.sector) === key(sector.nickname)),
-      sports: pack.sports,
-      clubTable: pack.clubTable,
-      playerStats: pack.playerStats,
-      results: pack.results,
-      records: pack.records,
-      form: [{ sector: sector.nickname, form: pack.form, average: pack.sports.football.average }],
-      counts: {
-        sectors: 1,
-        active: sector.status === 'active' ? 1 : 0,
-        clubs: pack.clubs,
-        players: pack.players,
-        competitions: pack.competitions
-      }
-    };
+    return { id: sector.nickname, label: sector.name, sector, sectors: [sector], clubs: model.clubs.filter(c => key(c.sector) === key(sector.nickname)), players: model.players.filter(p => key(p.sector) === key(sector.nickname)), competitions: model.competitions.filter(c => key(c.sector) === key(sector.nickname)), sports: pack.sports, clubTable: pack.clubTable, playerStats: pack.playerStats, results: pack.results, records: pack.records, form: [{ sector: sector.nickname, form: pack.form, average: pack.sports.football.average }], counts: { sectors: 1, active: sector.status === 'active' ? 1 : 0, clubs: pack.clubs, players: pack.players, competitions: pack.competitions } };
   }
 
   async function load() {
     if (cache) return cache;
-    const errors = [];
-    const warnings = [];
+    const errors = []; const warnings = [];
     const entries = await Promise.all(Object.entries(files).map(async ([name, path]) => {
-      try {
-        return [name, await fetchJSON(path)];
-      } catch (err) {
-        errors.push(err.message);
-        return [name, null];
-      }
+      try { return [name, await fetchJSON(path)]; }
+      catch (err) { errors.push(err.message); return [name, null]; }
     }));
     const raw = Object.fromEntries(entries);
     const registries = validateRegistries(raw, errors, warnings);
     const dash = normalizeDashboard(raw.dashboard, registries, errors, warnings);
     cache = {
       ...registries,
-      dashboard: dash.raw,
+      dashboard: {
+        ...dash.raw,
+        mock: dash.mock,
+        network: dash.network,
+        sports: dash.network.sports,
+        sectorStats: dash.bySector,
+        clubTable: dash.network.clubTable,
+        playerStats: dash.network.playerStats,
+        results: dash.network.results,
+        records: dash.network.records
+      },
       bySector: dash.bySector,
       network: dash.network,
       indexes: {
@@ -347,10 +264,5 @@ const CASPER_DATA = (() => {
     return cache;
   }
 
-  return { load, validate: raw => {
-    const errors = [];
-    const warnings = [];
-    validateRegistries(raw, errors, warnings);
-    return { ok: !errors.length, errors, warnings };
-  }, clear: () => { cache = null; }, sports: SPORTS };
+  return { load, validate: raw => { const errors = []; const warnings = []; validateRegistries(raw, errors, warnings); return { ok: !errors.length, errors, warnings }; }, clear: () => { cache = null; }, sports: SPORTS };
 })();
