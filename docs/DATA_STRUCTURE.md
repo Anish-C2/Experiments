@@ -6,7 +6,37 @@ CASPER separates **entity data** from **sporting event data**.
 - CSN stores what happened in competitions and matches.
 - The application/engine joins the two using General IDs.
 
-This keeps the data model simple, avoids duplicated profiles, and makes sporting records reproducible from source events.
+## Sector model
+
+A **Sector** is a geographical area in which CASPER operates remotely. A Sector is not simply an organisational department; it is a regional sporting jurisdiction containing clubs, players, competitions and sporting activity.
+
+A useful analogy is:
+
+```text
+CASPER       → UEFA
+Sector 01    → Spain
+Sector 02    → Italy
+Sector 03    → Germany
+Sector 04    → France
+```
+
+The names above are only an analogy. Actual CASPER sectors may represent any geographical operating area defined by CASPER.
+
+The hierarchy is therefore:
+
+```text
+CASPER
+ ├── SECTOR 01
+ │    ├── Clubs
+ │    ├── Players
+ │    ├── Competitions
+ │    └── Matches
+ ├── SECTOR 02
+ │    └── ...
+ └── SECTOR N
+```
+
+Entities can participate across sectors where the registry explicitly permits it. The sector is the primary geographical context for CASPER statistics and competition discovery.
 
 ## Core registries
 
@@ -74,40 +104,37 @@ A player's `nickname` is a unique **3-letter General ID** among registered playe
 
 Names do not have to be unique. Two players can have the same name as long as their General IDs are different.
 
-Example:
-
-```text
-Example Player → xen
-Example Player → ryu
-```
-
 The nickname is intended to remain stable during normal profile edits so historical CSN records continue to resolve correctly.
 
 ### Club IDs
 
 Clubs use their registered nickname as their General ID.
 
-Example:
-
-```text
-Example Club → abc
-```
-
 ### Sector IDs
 
 Sectors use their registered nickname as their General ID.
 
-Example:
+## Sporting statistics
+
+Statistics are **sport-specific** and must never silently combine incompatible scoring systems.
 
 ```text
-School Sports Network → SSN
+FOOTBALL → goals
+FUTSAL   → goals
+CRICSAL  → runs + wickets
 ```
+
+Football and futsal goals are tracked separately even though both are goal-based sports. A football goal total must not include futsal goals.
+
+Cricsal is represented using its own scoring model. Its primary match/player statistics are **runs** and **wickets**, not goals. Cricsal runs and wickets must therefore have dedicated fields, labels and leaderboards in the application.
+
+Cross-sport pages may show multiple sport totals, but each value must retain its sport context.
 
 ## Relationships
 
 Registry relationships are represented by General IDs rather than copied objects.
 
-A player can belong to multiple clubs over time, and a club can have multiple players. A player can also be associated with multiple sectors where applicable.
+A player can belong to multiple clubs over time, and a club can have multiple players. Players and clubs can be associated with sectors as defined by the registry.
 
 Conceptually:
 
@@ -115,13 +142,13 @@ Conceptually:
 PLAYER ──< CLUB
    │
    └──< SECTOR
+          │
+          ├──< CLUB
+          ├──< PLAYER
+          └──< COMPETITION
 ```
 
-The arrays in the registry records contain references such as `"abc"` or `"SSN"`, not full embedded club/sector objects.
-
 ## Source of truth
-
-Each kind of information has one primary home:
 
 | Data | Source |
 |---|---|
@@ -131,10 +158,10 @@ Each kind of information has one primary home:
 | Match events | CSN |
 | Competition structure | CSN |
 | Standings | Derived from CSN |
-| Player statistics | Derived from CSN |
+| Football statistics | Derived from CSN |
+| Futsal statistics | Derived from CSN |
+| Cricsal runs/wickets | Derived from CSN |
 | Records | Derived from CSN |
-
-This prevents hard-coded statistics from becoming inconsistent with the underlying results.
 
 ## Derived data
 
@@ -142,18 +169,19 @@ The application should calculate statistics from registered entities and CSN rec
 
 Examples include:
 
+- sector totals
 - matches played
 - wins, draws, and losses
-- goals for and against
-- goal difference
-- points
-- win rate
-- player goals and assists
+- football goals for and against
+- futsal goals for and against
+- goal difference within the relevant sport
+- Cricsal runs
+- Cricsal wickets
+- player goals and assists for football/futsal
+- player runs and wickets for Cricsal
 - cards and disciplinary totals
 - competition records
 - historical records
-
-A UI may cache or display derived values, but the underlying event data remains authoritative.
 
 ## Validation
 
@@ -167,6 +195,7 @@ A registry loader should validate at least:
 6. Referenced club IDs exist.
 7. Referenced sector IDs exist.
 8. CSN entity references resolve to registered General IDs.
+9. Sport-specific statistics are stored and displayed under the correct sport.
 
 ## Intentional simplicity
 
