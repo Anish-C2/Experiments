@@ -1,0 +1,15 @@
+{
+  "schema": "casper.players",
+  "version": 1,
+  "updated": "2026-09-10",
+  "players": [
+    {"nickname":"EXP","name":"Example Player","birthyear":2012,"club":"NSR","sector":"SSN","sectors":["SSN"],"date_registered":"2026-09-10"},
+    {"nickname":"ANO","name":"Another Player","birthyear":2012,"club":"EAS","sector":"OSA","sectors":["OSA"],"date_registered":"2026-09-10"},
+    {"nickname":"THI","name":"Third Player","birthyear":2013,"club":"RIV","sector":"CFA","sectors":["CFA"],"date_registered":"2026-09-10"},
+    {"nickname":"FOU","name":"Fourth Player","birthyear":2012,"club":"NSR","sector":"SSN","sectors":["SSN"],"date_registered":"2026-09-10"},
+    {"nickname":"FIF","name":"Fifth Player","birthyear":2013,"club":"EAS","sector":"OSA","sectors":["OSA"],"date_registered":"2026-09-10"},
+    {"nickname":"SIX","name":"Sixth Player","birthyear":2012,"club":"RIV","sector":"CFA","sectors":["CFA"],"date_registered":"2026-09-10"},
+    {"nickname":"SEV","name":"Seventh Player","birthyear":2013,"club":"SOU","sector":"CSA","sectors":["CSA"],"date_registered":"2026-09-10"},
+    {"nickname":"EIG","name":"Eighth Player","birthyear":2012,"club":"NSR","sector":"SSN","sectors":["SSN"],"date_registered":"2026-09-10"}
+  ]
+}
