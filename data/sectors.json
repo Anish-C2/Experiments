@@ -1,0 +1,11 @@
+{
+  "schema": "casper.sectors",
+  "version": 1,
+  "updated": "2026-09-10",
+  "sectors": [
+    {"nickname":"SSN","name":"Northstar Sector","region":"Northstar","status":"active","description":"Primary CASPER operating area"},
+    {"nickname":"OSA","name":"Eastridge Sector","region":"Eastridge","status":"active","description":"Open competition network"},
+    {"nickname":"CFA","name":"Riverside Sector","region":"Riverside","status":"active","description":"Community football jurisdiction"},
+    {"nickname":"CSA","name":"Southridge Sector","region":"Southridge","status":"active","description":"Community multi-sport network"}
+  ]
+}
