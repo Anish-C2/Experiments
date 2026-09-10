@@ -5,6 +5,7 @@
   "competitions": [
     {"nickname":"SSNFB","name":"SSN Premier Division","sector":"SSN","sport":"football","type":"league","season":"2026A","status":"active","ruleset":"points"},
     {"nickname":"SSNFS","name":"SSN Futsal Cup","sector":"SSN","sport":"futsal","type":"cup","season":"2026A","status":"active","ruleset":"knockout"},
+    {"nickname":"OSAFB","name":"OSA Football League","sector":"OSA","sport":"football","type":"league","season":"2026A","status":"active","ruleset":"points"},
     {"nickname":"OSACR","name":"OSA Cricsal League","sector":"OSA","sport":"cricsal","type":"league","season":"2026A","status":"live","ruleset":"points"},
     {"nickname":"CFAFB","name":"CFA Community Shield","sector":"CFA","sport":"football","type":"cup","season":"2026A","status":"active","ruleset":"knockout"},
     {"nickname":"CSACR","name":"CSA Community Cricsal","sector":"CSA","sport":"cricsal","type":"league","season":"2026A","status":"active","ruleset":"points"}
