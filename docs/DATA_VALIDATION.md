@@ -18,9 +18,20 @@ If `manifest.json` is missing, the loader rebuilds `data/{sector}/{Sport}/Season
 ## Sport folders
 
 | Sport | Primary statistics | Season folder |
-|---|---|---|
+|---|---|
 | Football | goals | `Football/` |
 | Futsal | goals | `Futsal/` |
 | Cricsal | runs, wickets | `Cricsal/` |
 
 A football/futsal CSN file must not use delivery-array notation. A Cricsal file must not use goal notation.
+
+## General IDs
+
+| Entity | Pattern | Examples |
+|---|---|---|
+| Sector | 2–6 letters/digits | `S1`, `S2` |
+| Club | 2–6 letters/digits | `bbu`, `rsa`, `sey` |
+| Player | 2–20 letter name | `Anish`, `Rio`, `Divyanshu` |
+| Competition | 3–8 letters/digits | `pc26a`, `fsc26a` |
+
+Player nicknames are first names from the registry, not forced 3-letter codes.
