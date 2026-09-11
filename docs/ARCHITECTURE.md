@@ -83,16 +83,6 @@ Shared renderer for Sector, Club, Player and Competition directories/profiles. I
 - `records.html` — sport-separated records and network statistical snapshot.
 - `docs.html` — automatic Markdown documentation browser.
 
-## Award culture
-
-CASPER prioritizes measurable sporting performance. Awards should be statistically determined whenever reliable data exists, with discretionary recognition reserved for achievements that cannot reasonably be quantified.
-
-Competition awards and seasonal awards have different scopes. Every competition has an explicit award limit to prevent award padding, while statistical sufficiency determines whether a particular award is actually eligible to be issued. A small competition can therefore have meaningful awards without being forced to fill its entire quota.
-
-Seasonal awards are not cancelled merely because a season is short. If a sport's actual calendar contains only one cup and three matches, those three matches constitute the complete season for that sport. Seasonal awards may be derived from those matches when the underlying data is sufficient. A competition award and a seasonal award can have the same winner when the competition constitutes the whole season; they remain separate honors because their scopes differ.
-
-See `docs/STATISTICS.md` for the detailed award framework and examples.
-
 ## Shared styling
 
 Every page links to `css/style.css`. There is no page-specific stylesheet. The single stylesheet owns navigation, typography, layout, tables, cards, documentation styling and responsive behavior.
