@@ -1,16 +1,6 @@
 # CASPER MATCH ARCHIVE · 2026A
+# LEGACY POINTER
+# Official season files now live under:
+#   data/{sector}/{Sport}/Season_2026A.csn
+# This file is kept so older links do not 404.
 # MOCK DATA — demonstration dataset only
-id="m001"
-NSR-SOU:3-1#MD12;
-
-id="m002"
-EAS-RIV:2-2#MD11;
-
-id="m003"
-NSR-EAS:6-5#SF;
-
-id="m004"
-RIV-SOU:58-44#MD05;
-
-id="m005"
-EAS-NSR:16-18#F;

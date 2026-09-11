@@ -1,0 +1,28 @@
+{
+  "schema": "casper.manifest",
+  "version": 1,
+  "updated": "2026-09-11",
+  "mock": true,
+  "layout": "data/{sector}/{Sport}/Season_{season}.csn",
+  "seasons": ["2026A"],
+  "sports": ["football", "futsal", "cricsal"],
+  "sportFolders": {
+    "football": "Football",
+    "futsal": "Futsal",
+    "cricsal": "Cricsal"
+  },
+  "files": [
+    {"sector": "SSN", "sport": "football", "season": "2026A", "path": "data/SSN/Football/Season_2026A.csn"},
+    {"sector": "SSN", "sport": "futsal", "season": "2026A", "path": "data/SSN/Futsal/Season_2026A.csn"},
+    {"sector": "SSN", "sport": "cricsal", "season": "2026A", "path": "data/SSN/Cricsal/Season_2026A.csn"},
+    {"sector": "OSA", "sport": "football", "season": "2026A", "path": "data/OSA/Football/Season_2026A.csn"},
+    {"sector": "OSA", "sport": "futsal", "season": "2026A", "path": "data/OSA/Futsal/Season_2026A.csn"},
+    {"sector": "OSA", "sport": "cricsal", "season": "2026A", "path": "data/OSA/Cricsal/Season_2026A.csn"},
+    {"sector": "CFA", "sport": "football", "season": "2026A", "path": "data/CFA/Football/Season_2026A.csn"},
+    {"sector": "CFA", "sport": "futsal", "season": "2026A", "path": "data/CFA/Futsal/Season_2026A.csn"},
+    {"sector": "CFA", "sport": "cricsal", "season": "2026A", "path": "data/CFA/Cricsal/Season_2026A.csn"},
+    {"sector": "CSA", "sport": "football", "season": "2026A", "path": "data/CSA/Football/Season_2026A.csn"},
+    {"sector": "CSA", "sport": "futsal", "season": "2026A", "path": "data/CSA/Futsal/Season_2026A.csn"},
+    {"sector": "CSA", "sport": "cricsal", "season": "2026A", "path": "data/CSA/Cricsal/Season_2026A.csn"}
+  ]
+}

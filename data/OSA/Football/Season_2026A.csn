@@ -1,0 +1,11 @@
+# CASPER CSN
+# schema=casper.csn
+# sector=OSA
+# sport=football
+# season=2026A
+# competition=OSAFB
+# status=MOCK
+# OSA Football League · 2026A
+
+id="osafb-md11-001"
+EAS-RIV:2-2#MD11{19:gh@ANO,33:ga@SIX,58:gh@ANO,74:ga@SIX}(dur=90,att=142);

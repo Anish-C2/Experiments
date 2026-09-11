@@ -1,0 +1,11 @@
+# CASPER CSN
+# schema=casper.csn
+# sector=CSA
+# sport=cricsal
+# season=2026A
+# competition=CSACR
+# status=MOCK
+# CSA Community Cricsal · 2026A
+
+id="csacr-md05-001"
+RIV-SOU:[6,6,6,6,6,6,6,6,6,4]-[6,6,6,6,6,6,6,2,W]{att=48}#MD05;
