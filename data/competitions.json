@@ -1,13 +1,21 @@
 {
   "schema": "casper.competitions",
-  "version": 1,
-  "updated": "2026-09-10",
+  "version": 2,
+  "updated": "2026-09-11",
   "competitions": [
-    {"nickname":"SSNFB","name":"SSN Premier Division","sector":"SSN","sport":"football","type":"league","season":"2026A","status":"active","ruleset":"points"},
-    {"nickname":"SSNFS","name":"SSN Futsal Cup","sector":"SSN","sport":"futsal","type":"cup","season":"2026A","status":"active","ruleset":"knockout"},
-    {"nickname":"OSAFB","name":"OSA Football League","sector":"OSA","sport":"football","type":"league","season":"2026A","status":"active","ruleset":"points"},
-    {"nickname":"OSACR","name":"OSA Cricsal League","sector":"OSA","sport":"cricsal","type":"league","season":"2026A","status":"live","ruleset":"points"},
-    {"nickname":"CFAFB","name":"CFA Community Shield","sector":"CFA","sport":"football","type":"cup","season":"2026A","status":"active","ruleset":"knockout"},
-    {"nickname":"CSACR","name":"CSA Community Cricsal","sector":"CSA","sport":"cricsal","type":"league","season":"2026A","status":"active","ruleset":"points"}
+    {"nickname":"pc26a","name":"Pioneer Cup","sector":"S1","sport":"futsal","type":"cup","season":"2026A","status":"completed","ruleset":"groups+knockout"},
+    {"nickname":"rc26a","name":"Relegator Cup","sector":"S1","sport":"futsal","type":"cup","season":"2026A","status":"completed","ruleset":"knockout"},
+    {"nickname":"csc26a","name":"Chroma Super Cup","sector":"S1","sport":"futsal","type":"cup","season":"2026A","status":"completed","ruleset":"knockout"},
+    {"nickname":"gr26a","name":"Grande","sector":"S1","sport":"futsal","type":"cup","season":"2026A","status":"completed","ruleset":"knockout"},
+    {"nickname":"cl26a","name":"Conference League","sector":"S1","sport":"futsal","type":"league","season":"2026A","status":"completed","ruleset":"points"},
+    {"nickname":"prc26a","name":"Peripheral Cup","sector":"S1","sport":"futsal","type":"league","season":"2026A","status":"completed","ruleset":"points"},
+    {"nickname":"pl26a","name":"Premier League","sector":"S1","sport":"futsal","type":"league","season":"2026A","status":"completed","ruleset":"points"},
+    {"nickname":"sc26a","name":"Futsal SuperCup","sector":"S1","sport":"futsal","type":"cup","season":"2026A","status":"completed","ruleset":"knockout"},
+    {"nickname":"msc26a","name":"Minor Supercup","sector":"S1","sport":"futsal","type":"cup","season":"2026A","status":"completed","ruleset":"knockout"},
+    {"nickname":"ssc26a","name":"Sub Supercup","sector":"S1","sport":"futsal","type":"cup","season":"2026A","status":"completed","ruleset":"knockout"},
+    {"nickname":"fn26a","name":"Finale","sector":"S1","sport":"futsal","type":"cup","season":"2026A","status":"completed","ruleset":"knockout"},
+    {"nickname":"fsc26a","name":"Football SuperCup","sector":"S1","sport":"football","type":"cup","season":"2026A","status":"live","ruleset":"series"},
+    {"nickname":"tc26a","name":"Titan Cup","sector":"S1","sport":"cricsal","type":"cup","season":"2026A","status":"completed","ruleset":"knockout"},
+    {"nickname":"sl26a","name":"SuperLeague","sector":"S2","sport":"futsal","type":"league","season":"2026A","status":"live","ruleset":"points"}
   ]
 }

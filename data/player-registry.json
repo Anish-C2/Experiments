@@ -1,15 +1,25 @@
 {
   "schema": "casper.players",
-  "version": 1,
-  "updated": "2026-09-10",
+  "version": 2,
+  "updated": "2026-09-11",
   "players": [
-    {"nickname":"EXP","name":"Example Player","birthyear":2012,"club":"NSR","sector":"SSN","sectors":["SSN"],"date_registered":"2026-09-10"},
-    {"nickname":"ANO","name":"Another Player","birthyear":2012,"club":"EAS","sector":"OSA","sectors":["OSA"],"date_registered":"2026-09-10"},
-    {"nickname":"THI","name":"Third Player","birthyear":2013,"club":"RIV","sector":"CFA","sectors":["CFA"],"date_registered":"2026-09-10"},
-    {"nickname":"FOU","name":"Fourth Player","birthyear":2012,"club":"NSR","sector":"SSN","sectors":["SSN"],"date_registered":"2026-09-10"},
-    {"nickname":"FIF","name":"Fifth Player","birthyear":2013,"club":"EAS","sector":"OSA","sectors":["OSA"],"date_registered":"2026-09-10"},
-    {"nickname":"SIX","name":"Sixth Player","birthyear":2012,"club":"RIV","sector":"CFA","sectors":["CFA"],"date_registered":"2026-09-10"},
-    {"nickname":"SEV","name":"Seventh Player","birthyear":2013,"club":"SOU","sector":"CSA","sectors":["CSA"],"date_registered":"2026-09-10"},
-    {"nickname":"EIG","name":"Eighth Player","birthyear":2012,"club":"NSR","sector":"SSN","sectors":["SSN"],"date_registered":"2026-09-10"}
+    {"nickname":"Anish","name":"Anish","club":"bbu","clubs":["bbu","sey"],"sector":"S1","sectors":["S1","S2"],"date_registered":"2026-07-24"},
+    {"nickname":"Bhavesh","name":"Bhavesh","club":"kko","clubs":["kko"],"sector":"S1","sectors":["S1"],"date_registered":"2026-07-24"},
+    {"nickname":"Arjun","name":"Arjun","club":"rsa","clubs":["rsa"],"sector":"S1","sectors":["S1"],"date_registered":"2026-07-24"},
+    {"nickname":"Vyom","name":"Vyom","club":"nas","clubs":["nas"],"sector":"S1","sectors":["S1"],"date_registered":"2026-07-24"},
+    {"nickname":"Srinjoy","name":"Srinjoy","club":"ssc","clubs":["ssc"],"sector":"S1","sectors":["S1"],"date_registered":"2026-07-24"},
+    {"nickname":"Anirban","name":"Anirban","club":"mar","clubs":["mar"],"sector":"S1","sectors":["S1"],"date_registered":"2026-07-24"},
+    {"nickname":"Rounak","name":"Rounak","club":"igr","clubs":["igr"],"sector":"S1","sectors":["S1"],"date_registered":"2026-07-24"},
+    {"nickname":"Gourav","name":"Gourav","club":"mvl","clubs":["mvl"],"sector":"S1","sectors":["S1"],"date_registered":"2026-07-24"},
+    {"nickname":"Aryan","name":"Aryan","club":"vos","clubs":["vos"],"sector":"S1","sectors":["S1"],"date_registered":"2026-07-24"},
+    {"nickname":"Rajdeep","name":"Rajdeep","club":"hor","clubs":["hor"],"sector":"S1","sectors":["S1"],"date_registered":"2026-07-24"},
+    {"nickname":"Divyanshu","name":"Divyanshu","club":"mfc","clubs":["mfc"],"sector":"S1","sectors":["S1"],"date_registered":"2026-07-24"},
+    {"nickname":"Anshuman","name":"Anshuman","club":"rut","clubs":["rut"],"sector":"S1","sectors":["S1"],"date_registered":"2026-07-24"},
+    {"nickname":"Aarav","name":"Aarav","club":"rsa","clubs":["rsa"],"sector":"S1","sectors":["S1"],"date_registered":"2026-07-24"},
+    {"nickname":"Aditya","name":"Aditya","club":"bbu","clubs":["bbu"],"sector":"S1","sectors":["S1"],"date_registered":"2026-07-24"},
+    {"nickname":"Pronob","name":"Pronob","club":"rsa","clubs":["rsa"],"sector":"S1","sectors":["S1"],"date_registered":"2026-07-24"},
+    {"nickname":"Promit","name":"Promit","club":"rsa","clubs":["rsa"],"sector":"S1","sectors":["S1"],"date_registered":"2026-07-24"},
+    {"nickname":"Rudra","name":"Rudra","club":"sra","clubs":["sra","pcc"],"sector":"S2","sectors":["S2"],"date_registered":"2026-09-03"},
+    {"nickname":"Rio","name":"Rio","club":"rtf","clubs":["rtf","rrc"],"sector":"S2","sectors":["S2"],"date_registered":"2026-09-03"}
   ]
 }
