@@ -1,11 +1,12 @@
 const $ = s => document.querySelector(s);
-const icon = { football: '⚽', futsal: '🧥', cricsal: '🏏' };
+const icon = { football: '⚽', futsal: '🥅', cricsal: '🏏' };
 const sportLabel = s => s === 'cricsal' ? 'CRICSAL' : String(s || '').toUpperCase();
 
 function esc(v) {
   return String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
-function fmt(n) { return Number(n || 0).toLocaleString('en-IN'); }
+function fmt(n) { return Number(n || 0).toLocaleString('en-IN');
+}
 function setText(sel, text) { const el = $(sel); if (el) el.textContent = text; }
 
 function sportLine(sport, block) {
@@ -54,7 +55,9 @@ function renderSectors(model, scope) {
 function renderClubs(model, scope) {
   const host = $('#club-table');
   if (!host) return;
-  const rows = scope.clubTable;
+  const rows = scope.id === 'ALL'
+    ? [...scope.clubTable].sort((a, b) => (Number(b.elo) || 0) - (Number(a.elo) || 0) || (Number(b.gd) || 0) - (Number(a.gd) || 0)).map((c, i) => ({ ...c, rank: i + 1 }))
+    : scope.clubTable;
   host.innerHTML = `<div class="club-head"><span>#</span><span>CLUB</span><span>SEC</span><span>P</span><span>W</span><span>D</span><span>L</span><span>GF</span><span>GA</span><span>GD</span><span>ELO</span><span>WR</span><span>FORM</span></div>` +
     (rows.map(c => {
       const club = model.get('club', c.club);

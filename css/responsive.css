@@ -1,8 +1,9 @@
+html,body{overflow-x:visible}
 /* CASPER responsive layout — tables scroll inside their box instead of stretching the page. */
 main,.site-footer,main>*,.mast,.data-grid,.data-grid>*,.detail-grid,.detail-grid>*,.competition-shell,.comp-main,.comp-main>*,.box,.table-scroll,.comp-list{min-width:0}
 .stats{grid-template-columns:repeat(auto-fit,minmax(112px,1fr))}
 .stats div,.stats small,.stats strong,.stats span{min-width:0;overflow:hidden;text-overflow:ellipsis}
-.sector-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr))}
+.sector-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 .detail-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr))}
 .data-grid{grid-template-columns:minmax(0,1.9fr) minmax(0,.95fr) minmax(0,.78fr)}
 .table-scroll,.comp-list,#players-list,#results-list,#club-table{width:100%;max-width:100%;min-width:0;overflow-x:auto}
