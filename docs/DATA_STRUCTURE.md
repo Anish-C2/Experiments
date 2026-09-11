@@ -4,6 +4,7 @@ CASPER separates **entity data** from **sporting event data**.
 
 - JSON registries store who and what exists.
 - Sector CSN files store what happened in competitions and matches.
+- Awards live in `data/awards.json` and in CSN `aw()` blocks.
 - The application joins the two using General IDs.
 - Derived statistics are presentation/calculation data, not identity data.
 
@@ -13,14 +14,12 @@ A **Sector** is a geographical area in which CASPER operates remotely.
 
 ```text
 CASPER
- ├── SSN
+ ├── S1  Sector 1: Saltlake 5
  │    ├── Football / Futsal / Cricsal
  │    ├── Clubs
  │    ├── Players
  │    └── Competitions
- ├── OSA
- ├── CFA
- └── CSA
+ └── S2  Sector 2
 ```
 
 ## Current repository data layer
@@ -31,24 +30,22 @@ CASPER
  ├── clubs.json
  ├── player-registry.json
  ├── competitions.json
- ├── dashboard.json
+ ├── awards.json
+ ├── dashboard.json          derived-from-CSN flag (not a scorebook)
  ├── manifest.json
- ├── SSN/
+ ├── S1/                     Sector 1: Saltlake 5
  │   ├── Football/Season_2026A.csn
  │   ├── Futsal/Season_2026A.csn
  │   └── Cricsal/Season_2026A.csn
- ├── OSA/
- ├── CFA/
- └── CSA/
+ └── S2/
+     ├── Football/Season_2026A.csn
+     ├── Futsal/Season_2026A.csn
+     └── Cricsal/Season_2026A.csn
 ```
 
-Each JSON file has a top-level `schema`, `version`, and `updated` field.
+Official 2026A results were copied from `Anish-C2/CASPER`. Mock scorebooks and the old archive directory are gone.
 
-`dashboard.json` is marked `mock: true`. It is a presentation snapshot until every official match is in CSN.
-
-`data/manifest.json` lists every sector/sport/season CSN file. If the manifest is missing, the loader reconstructs the same paths from the sector registry.
-
-Empty seasons still keep a CSN file so the tree stays complete.
+`dashboard.json` is `mock: false`. Homepage totals are computed from CSN match lines.
 
 ## Source of truth
 
@@ -58,15 +55,7 @@ Empty seasons still keep a CSN file so the tree stays complete.
 | Club identity | `data/clubs.json` |
 | Sector identity | `data/sectors.json` |
 | Competition identity | `data/competitions.json` |
+| Official awards | `data/awards.json` + CSN `aw()` |
 | Season file index | `data/manifest.json` |
 | Match events | `data/{sector}/{Sport}/Season_{season}.csn` |
-| Homepage mock totals | `data/dashboard.json` |
-
-## Relationships
-
-```text
-PLAYER ──→ CLUB ──→ SECTOR
-                  └──→ COMPETITION ──→ Season_2026A.csn
-```
-
-For notation, see [CSN](./CSN.md). For validation, see [Data Validation](./DATA_VALIDATION.md).
+| Presentation totals | derived from CSN by `js/data.js` |
