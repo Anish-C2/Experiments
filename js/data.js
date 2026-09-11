@@ -1,6 +1,7 @@
 const CASPER_DATA = (() => {
   let cache = null;
   const SPORTS = ['football', 'futsal', 'cricsal'];
+  const SPORT_DIR = { football: 'Football', futsal: 'Futsal', cricsal: 'Cricsal' };
   const files = {
     sectors: 'data/sectors.json',
     clubs: 'data/clubs.json',
@@ -90,6 +91,12 @@ const CASPER_DATA = (() => {
     catch { throw new Error(`${path} is not valid JSON`); }
   }
 
+  async function fetchText(path) {
+    const r = await fetch(`${path}?v=${Date.now()}`, { cache: 'no-store' });
+    if (!r.ok) throw new Error(`${path} returned HTTP ${r.status}`);
+    return r.text();
+  }
+
   function flattenLegacyDashboard(raw, errors) {
     if (raw?.sectors && typeof raw.sectors === 'object' && !Array.isArray(raw.sectors)) return raw.sectors;
     const out = {};
@@ -103,6 +110,207 @@ const CASPER_DATA = (() => {
       errors.push('dashboard: legacy snapshot has tables/results but no sectorStats');
     }
     return out;
+  }
+
+  function headerMeta(text) {
+    const meta = {};
+    for (const line of String(text || '').split(/\r?\n/)) {
+      const m = line.match(/^#\s*([a-zA-Z]+)\s*=\s*(.+?)\s*$/);
+      if (m) meta[key(m[1])] = m[2].trim();
+    }
+    return meta;
+  }
+
+  function parseInnings(raw) {
+    const tokens = String(raw || '').split(',').map(t => t.trim()).filter(Boolean);
+    let runs = 0, wickets = 0;
+    for (const token of tokens) {
+      if (/^w$/i.test(token)) { wickets += 1; continue; }
+      const extra = token.match(/^(\d+)?(wd|nb)$/i);
+      if (extra) { runs += Number(extra[1] || 1); continue; }
+      const n = Number(token);
+      if (Number.isFinite(n)) runs += n;
+    }
+    return { tokens, runs, wickets };
+  }
+
+  function parseCSN(text, fileMeta, errors) {
+    const meta = { ...fileMeta, ...headerMeta(text) };
+    const sport = key(meta.sport);
+    const sector = meta.sector || fileMeta.sector;
+    const season = meta.season || fileMeta.season;
+    const competition = meta.competition || fileMeta.competition || '';
+    const matches = [];
+    const body = String(text || '').replace(/\r/g, '');
+    const blocks = body.split(/\nid\s*=\s*"/i).slice(1);
+    for (const block of blocks) {
+      const id = (block.match(/^([^"]+)"/) || [])[1];
+      const slice = block.slice(String(id || '').length + 1);
+      const line = slice.split('\n').map(x => x.trim()).find(x => x && !x.startsWith('#')) || '';
+      if (!id) { errors.push(`${fileMeta.path}: CSN match is missing id`); continue; }
+      if (!line) { errors.push(`${fileMeta.path}: CSN match ${id} has no body`); continue; }
+      const cricket = line.match(/^([A-Za-z0-9]{2,6})-([A-Za-z0-9]{2,6}):\[([^\]]*)\]-\[([^\]]*)\](?:\{([^}]*)\})?(?:#([A-Za-z0-9]+))?;?$/);
+      const goals = line.match(/^([A-Za-z0-9]{2,6})-([A-Za-z0-9]{2,6}):(\d+)\s*[-\u2013]\s*(\d+)(?:\(([^)]*)\))?(?:#([A-Za-z0-9]+))?(?:\{([^}]*)\})?(?:\(([^)]*)\))?;?$/);
+      if (cricket) {
+        if (sport && sport !== 'cricsal') errors.push(`${fileMeta.path}: ${id} uses Cricsal notation in a ${sport} file`);
+        const homeIn = parseInnings(cricket[3]);
+        const awayIn = parseInnings(cricket[4]);
+        matches.push({
+          id, source: fileMeta.path, sector, season, competition,
+          sport: 'cricsal', home: cricket[1], away: cricket[2],
+          score: `${homeIn.runs}\u2013${awayIn.runs}`,
+          round: cricket[6] || 'MD',
+          duration: '12b',
+          status: 'FT',
+          runs: homeIn.runs + awayIn.runs,
+          wickets: homeIn.wickets + awayIn.wickets,
+          events: cricket[5] || ''
+        });
+        continue;
+      }
+      if (goals) {
+        if (sport === 'cricsal') errors.push(`${fileMeta.path}: ${id} uses goal notation in a cricsal file`);
+        const extra = goals[8] || '';
+        const dur = (extra.match(/dur=(\d+)/) || [])[1];
+        matches.push({
+          id, source: fileMeta.path, sector, season, competition,
+          sport: sport === 'futsal' ? 'futsal' : 'football',
+          home: goals[1], away: goals[2],
+          score: `${goals[3]}\u2013${goals[4]}`,
+          round: goals[6] || 'MD',
+          duration: dur ? `${dur}\u2032` : (sport === 'futsal' ? '40\u2032' : '90\u2032'),
+          status: 'FT',
+          events: goals[7] || '',
+          note: goals[5] || ''
+        });
+        continue;
+      }
+      errors.push(`${fileMeta.path}: could not parse CSN match ${id}`);
+    }
+    return { meta, matches };
+  }
+
+  function resultKey(row) {
+    return [key(row.sport), key(row.home), key(row.away), String(row.score || '').replace(/\s/g, ''), key(row.competition || '')].join('|');
+  }
+
+  function expectedLedgerFiles(registries, manifest) {
+    const seasons = arr(manifest, 'seasons').length ? arr(manifest, 'seasons') : ['2026A'];
+    const listed = arr(manifest, 'files');
+    if (listed.length) {
+      return listed.map(f => ({
+        sector: f.sector,
+        sport: key(f.sport),
+        season: f.season || seasons[0],
+        competition: f.competition || '',
+        path: f.path
+      }));
+    }
+    const out = [];
+    for (const sector of registries.sectors || []) {
+      for (const sport of SPORTS) {
+        for (const season of seasons) {
+          out.push({
+            sector: sector.nickname,
+            sport,
+            season,
+            competition: '',
+            path: `data/${sector.nickname}/${SPORT_DIR[sport]}/Season_${season}.csn`
+          });
+        }
+      }
+    }
+    return out;
+  }
+
+  async function loadLedger(registries, errors, warnings) {
+    let manifest = null;
+    try { manifest = await fetchJSON('data/manifest.json'); }
+    catch (err) { warnings.push(`data/manifest.json missing (${err.message}); reconstructing sector/sport/season paths`); }
+    if (manifest && manifest.schema && manifest.schema !== 'casper.manifest') {
+      warnings.push(`data/manifest.json unexpected schema ${manifest.schema}`);
+    }
+    const wanted = expectedLedgerFiles(registries, manifest || {});
+    const sectorMap = indexBy(registries.sectors);
+    const clubMap = indexBy(registries.clubs);
+    const competitionMap = indexBy(registries.competitions);
+    const matches = [];
+    const filesOut = [];
+    for (const file of wanted) {
+      if (file.sector && !sectorMap.has(key(file.sector))) {
+        errors.push(`ledger: unknown sector folder ${file.sector}`);
+        continue;
+      }
+      if (file.sport && !SPORTS.includes(file.sport)) {
+        errors.push(`ledger: unsupported sport ${file.sport} in ${file.path}`);
+        continue;
+      }
+      try {
+        const text = await fetchText(file.path);
+        const parsed = parseCSN(text, file, errors);
+        filesOut.push({ ...file, ok: true, matches: parsed.matches.length, empty: !parsed.matches.length });
+        for (const row of parsed.matches) {
+          if (row.home && !clubMap.has(key(row.home))) errors.push(`${file.path}: unknown home club ${row.home}`);
+          if (row.away && !clubMap.has(key(row.away))) errors.push(`${file.path}: unknown away club ${row.away}`);
+          if (row.competition && !competitionMap.has(key(row.competition))) {
+            errors.push(`${file.path}: unknown competition ${row.competition}`);
+          } else if (row.competition) {
+            const competition = competitionMap.get(key(row.competition));
+            if (competition.sport && row.sport !== competition.sport) {
+              errors.push(`${file.path}: ${row.id} sport ${row.sport} does not match ${competition.nickname} sport ${competition.sport}`);
+            }
+            if (competition.sector && key(competition.sector) !== key(row.sector)) {
+              warnings.push(`${file.path}: ${row.id} lives in ${row.sector} but competition ${competition.nickname} is registered to ${competition.sector}`);
+            }
+          }
+          matches.push(row);
+        }
+      } catch (err) {
+        warnings.push(`${file.path} not loaded (${err.message})`);
+        filesOut.push({ ...file, ok: false, matches: 0, empty: true });
+      }
+    }
+    const seen = new Set();
+    for (const row of matches) {
+      const idk = key(row.id);
+      if (seen.has(idk)) errors.push(`ledger: duplicate CSN id ${row.id}`);
+      else seen.add(idk);
+    }
+    return { manifest, files: filesOut, matches };
+  }
+
+  function mergeLedger(dash, ledger, errors) {
+    const byKey = new Map();
+    for (const sector of Object.keys(dash.bySector)) {
+      for (const row of dash.bySector[sector].results || []) byKey.set(resultKey(row), row);
+    }
+    for (const row of ledger.matches) {
+      const pack = dash.bySector[row.sector];
+      if (!pack) { errors.push(`ledger: result ${row.id} points at unknown sector ${row.sector}`); continue; }
+      const k = resultKey(row);
+      const existing = byKey.get(k);
+      if (existing) {
+        existing.id = existing.id || row.id;
+        existing.source = row.source;
+        continue;
+      }
+      pack.results.push({
+        id: row.id,
+        status: row.status,
+        home: row.home,
+        away: row.away,
+        score: row.score,
+        competition: row.competition,
+        round: row.round,
+        duration: row.duration,
+        sport: row.sport,
+        sector: row.sector,
+        source: row.source
+      });
+      byKey.set(k, pack.results[pack.results.length - 1]);
+    }
+    dash.network.results = Object.keys(dash.bySector).flatMap(id => dash.bySector[id].results);
+    return dash;
   }
 
   function normalizeDashboard(raw, registries, errors, warnings) {
@@ -148,7 +356,7 @@ const CASPER_DATA = (() => {
           const competition = competitionMap.get(key(row.competition));
           if (row.sport && competition.sport && row.sport !== competition.sport) errors.push(`${path}: sport ${row.sport} does not match competition sport ${competition.sport}`);
         }
-        if (row?.score && !/^\d+\s*[–-]\s*\d+$/.test(String(row.score))) errors.push(`${path}: score must look like 3–1`);
+        if (row?.score && !/^\d+\s*[\u2013-]\s*\d+$/.test(String(row.score))) errors.push(`${path}: score must look like 3\u20131`);
         return { ...row, sector: id };
       });
       bySector[id] = {
@@ -231,6 +439,8 @@ const CASPER_DATA = (() => {
     const raw = Object.fromEntries(entries);
     const registries = validateRegistries(raw, errors, warnings);
     const dash = normalizeDashboard(raw.dashboard, registries, errors, warnings);
+    const ledger = await loadLedger(registries, errors, warnings);
+    mergeLedger(dash, ledger, errors);
     cache = {
       ...registries,
       dashboard: {
@@ -246,6 +456,7 @@ const CASPER_DATA = (() => {
       },
       bySector: dash.bySector,
       network: dash.network,
+      ledger,
       indexes: {
         sector: indexBy(registries.sectors),
         club: indexBy(registries.clubs),
