@@ -28,7 +28,7 @@ These are computed from CSN match lines, not voted.
 
 | Award | Football | Futsal / Cricsal (1v1) |
 |---|---|---|
-| Top Scorer | most named goals (`gh=` / `ga=`) | most goals or runs scored |
+| Top Scorer | most named goals (`gh=` / `ga=`) | most goals or runs scored, credited to the 1v1 captain |
 | Best Defence | lowest GA / match (minimum 2 matches) | same |
 | Best Goalkeeper | most clean sheets | same (the 1v1 side that kept the sheet) |
 

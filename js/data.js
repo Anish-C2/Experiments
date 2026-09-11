@@ -7,7 +7,8 @@ const CASPER_DATA = (() => {
     clubs: 'data/clubs.json',
     players: 'data/player-registry.json',
     competitions: 'data/competitions.json',
-    dashboard: 'data/dashboard.json'
+    dashboard: 'data/dashboard.json',
+    awards: 'data/awards.json'
   };
   const arr = (o, k) => Array.isArray(o && o[k]) ? o[k] : [];
   const key = v => String(v || '').trim().toLowerCase();
@@ -60,10 +61,12 @@ const CASPER_DATA = (() => {
   }
 
   function validateRegistries(d, errors, warnings) {
-    for (const name of Object.keys(files)) {
+    const required = ['sectors', 'clubs', 'players', 'competitions', 'dashboard'];
+    for (const name of required) {
       if (!d[name]) errors.push('Missing dataset: ' + name);
       else if (!d[name].schema) warnings.push(name + ': missing schema');
     }
+    if (d.awards && !d.awards.schema) warnings.push('awards: missing schema');
     const sectors = arr(d.sectors, 'sectors');
     const clubs = arr(d.clubs, 'clubs');
     const players = arr(d.players, 'players');
@@ -116,11 +119,13 @@ const CASPER_DATA = (() => {
     const competitionMap = indexBy(registries.competitions);
     const matches = [];
     const filesOut = [];
+    const competitions = [];
     for (const file of wanted) {
       try {
         const text = await fetchText(file.path);
-        const parsed = CASPER_CSN.parse(text, file, errors);
-        filesOut.push({ path: file.path, ok: true, matches: parsed.matches.length });
+        const parsed = (CASPER_CSN.parseSeason || CASPER_CSN.parse)(text, file, errors);
+        filesOut.push({ path: file.path, ok: true, matches: parsed.matches.length, sport: file.sport, sector: file.sector, season: file.season });
+        for (const row of (parsed.competitions || [])) competitions.push(row);
         for (const row of parsed.matches) {
           if (row.home && !clubMap.has(key(row.home))) errors.push(file.path + ': unknown home club ' + row.home);
           if (row.away && !clubMap.has(key(row.away))) errors.push(file.path + ': unknown away club ' + row.away);
@@ -132,7 +137,7 @@ const CASPER_DATA = (() => {
         filesOut.push({ path: file.path, ok: false, matches: 0 });
       }
     }
-    return { manifest, files: filesOut, matches };
+    return { manifest, files: filesOut, matches, competitions };
   }
 
   function derive(registries, ledger) {
@@ -248,6 +253,8 @@ const CASPER_DATA = (() => {
       bySector: derived.bySector,
       network: derived.network,
       ledger,
+      seasonCompetitions: ledger.competitions || [],
+      officialAwards: raw.awards || null,
       indexes: { sector: indexBy(registries.sectors), club: indexBy(registries.clubs), player: indexBy(registries.players), competition: indexBy(registries.competitions) },
       mock: !!(raw.dashboard && raw.dashboard.mock),
       ok: !errors.length,
