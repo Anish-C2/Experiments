@@ -1,11 +1,21 @@
 {
   "schema": "casper.sectors",
-  "version": 1,
-  "updated": "2026-09-10",
+  "version": 2,
+  "updated": "2026-09-11",
   "sectors": [
-    {"nickname":"SSN","name":"Northstar Sector","region":"Northstar","status":"active","description":"Primary CASPER operating area"},
-    {"nickname":"OSA","name":"Eastridge Sector","region":"Eastridge","status":"active","description":"Open competition network"},
-    {"nickname":"CFA","name":"Riverside Sector","region":"Riverside","status":"active","description":"Community football jurisdiction"},
-    {"nickname":"CSA","name":"Southridge Sector","region":"Southridge","status":"active","description":"Community multi-sport network"}
+    {
+      "nickname": "S1",
+      "name": "Sector 1: Saltlake 5",
+      "region": "Saltlake 5",
+      "status": "active",
+      "description": "Founding CASPER operating sector. Official 2026A archive for football, futsal and cricsal."
+    },
+    {
+      "nickname": "S2",
+      "name": "Sector 2",
+      "region": "Apartment",
+      "status": "active",
+      "description": "Second CASPER operating sector. Futsal SuperLeague 2026A is in progress."
+    }
   ]
 }

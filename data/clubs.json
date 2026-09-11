@@ -1,13 +1,24 @@
 {
   "schema": "casper.clubs",
-  "version": 1,
-  "updated": "2026-09-10",
+  "version": 2,
+  "updated": "2026-09-11",
   "clubs": [
-    {"nickname":"NSR","name":"NSR FC","sector":"SSN"},
-    {"nickname":"EAS","name":"EAS United","sector":"OSA"},
-    {"nickname":"RIV","name":"RIV City","sector":"CFA"},
-    {"nickname":"SOU","name":"SOU Athletic","sector":"CSA"},
-    {"nickname":"NXI","name":"North XI","sector":"SSN"},
-    {"nickname":"EFC","name":"East FC","sector":"OSA"}
+    {"nickname":"bbu","name":"Black Bird United","sector":"S1","sectors":["S1","S2"]},
+    {"nickname":"kko","name":"Kolkata Kous","sector":"S1"},
+    {"nickname":"nas","name":"New Athletico Saltlake","sector":"S1"},
+    {"nickname":"rsa","name":"Real Saltlake","sector":"S1"},
+    {"nickname":"mfc","name":"Modo FC","sector":"S1"},
+    {"nickname":"ssc","name":"Super Strikers CF","sector":"S1"},
+    {"nickname":"rut","name":"Romano United","sector":"S1"},
+    {"nickname":"igr","name":"Inter Grande CF","sector":"S1"},
+    {"nickname":"mvl","name":"Movile","sector":"S1"},
+    {"nickname":"vos","name":"Vostok CF","sector":"S1"},
+    {"nickname":"hor","name":"Horsemen United","sector":"S1"},
+    {"nickname":"mar","name":"Martians","sector":"S1"},
+    {"nickname":"sey","name":"Seyfert CF","sector":"S2"},
+    {"nickname":"sra","name":"Southern Rangers","sector":"S2"},
+    {"nickname":"pcc","name":"Park Circle","sector":"S2"},
+    {"nickname":"rrc","name":"Red Rangers CF","sector":"S2"},
+    {"nickname":"rtf","name":"Red Tigers FC","sector":"S2"}
   ]
 }
