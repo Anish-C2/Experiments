@@ -12,9 +12,24 @@ JSON registries + CSN ledgers + awards.json
         validation / references
                  |
           normalized data
-          /            \
-     js/app.js       js/pages.js
+                 |
+            js/awards.js
+                 |
+           js/app.js + views.js
+                 |
+         hash router  #/page/id
 ```
+
+The UI is a single-page application. `index.html` is the only live document. Routes live in the hash:
+
+- `#/` home dashboard
+- `#/sectors` `#/sector/{id}`
+- `#/clubs` `#/club/{id}`
+- `#/players` `#/player/{id}`
+- `#/competitions` `#/competition/{id}`
+- `#/matches` `#/records` `#/docs/{file}`
+
+Legacy `*.html` files only redirect into those hashes.
 
 ## Entity sources
 
