@@ -28,6 +28,12 @@ const CASPER_CSN = (() => {
     return m ? { home: Number(m[1]), away: Number(m[2]) } : null;
   }
 
+  function parseDate(raw) {
+    const t = String(raw || '').replace(/\D/g, '');
+    if (t.length !== 8) return 0;
+    return Date.UTC(Number(t.slice(4)), Number(t.slice(2, 4)) - 1, Number(t.slice(0, 2)));
+  }
+
   function parseCreditList(raw) {
     const out = [];
     for (const part of String(raw || '').split('+').map(x => x.trim()).filter(Boolean)) {
@@ -75,6 +81,9 @@ const CASPER_CSN = (() => {
 
     const cricketBox = raw.match(/^([A-Za-z0-9]{2,6})-([A-Za-z0-9]{2,6}):\[([^\]]*)\]-\[([^\]]*)\](?:\{([^}]*)\})?(?:#([A-Za-z0-9]+))?$/);
     if (cricketBox) {
+      if (ctx.sport && ctx.sport !== 'cricsal') {
+        errors.push(ctx.path + ': football/futsal file used cricsal notation ' + raw);
+      }
       const homeIn = parseInnings(cricketBox[3]);
       const awayIn = parseInnings(cricketBox[4]);
       return {
@@ -82,12 +91,16 @@ const CASPER_CSN = (() => {
         sport: 'cricsal', home: cricketBox[1], away: cricketBox[2],
         score: homeIn.runs + '\u2013' + awayIn.runs, homeScore: homeIn.runs, awayScore: awayIn.runs,
         round: cricketBox[6] || 'MD', duration: '12b', status: 'FT',
-        runs: homeIn.runs + awayIn.runs, wickets: homeIn.wickets + awayIn.wickets, events: cricketBox[5] || ''
+        runs: homeIn.runs + awayIn.runs, wickets: homeIn.wickets + awayIn.wickets,
+        events: cricketBox[5] || '', credits: { goals: [], assists: [] }
       };
     }
 
     const cricketSlash = raw.match(/^([A-Za-z0-9]{2,6})-([A-Za-z0-9]{2,6}):(\d+)\/(\d+)(?:\([^)]*\))?-(\d+)\/(\d+)(?:\([^)]*\))?(?:\(([^)]*)\))?(?:#([A-Za-z0-9]+))?$/);
     if (cricketSlash) {
+      if (ctx.sport && ctx.sport !== 'cricsal') {
+        errors.push(ctx.path + ': football/futsal file used cricsal notation ' + raw);
+      }
       const hr = Number(cricketSlash[3]), hw = Number(cricketSlash[4]);
       const ar = Number(cricketSlash[5]), aw = Number(cricketSlash[6]);
       return {
@@ -95,12 +108,16 @@ const CASPER_CSN = (() => {
         sport: 'cricsal', home: cricketSlash[1], away: cricketSlash[2],
         score: hr + '\u2013' + ar, homeScore: hr, awayScore: ar,
         round: cricketSlash[8] || 'MD', duration: '1ov', status: 'FT',
-        runs: hr + ar, wickets: hw + aw, events: cricketSlash[7] || ''
+        runs: hr + ar, wickets: hw + aw, events: cricketSlash[7] || '',
+        credits: { goals: [], assists: [] }
       };
     }
 
     const goals = raw.match(/^([A-Za-z0-9]{2,6})-([A-Za-z0-9]{2,6}):(\d+)\s*[-\u2013]\s*(\d+)(?:\(([^)]*)\))?(?:#([A-Za-z0-9]+))?(?:\{([^}]*)\})?(?:\(([^)]*)\))?$/);
     if (goals) {
+      if (ctx.sport === 'cricsal') {
+        errors.push(ctx.path + ': cricsal file used goal notation ' + raw);
+      }
       const sport = ctx.sport === 'futsal' ? 'futsal' : 'football';
       const note = goals[5] || '';
       const extra = goals[8] || '';
@@ -118,13 +135,48 @@ const CASPER_CSN = (() => {
     return null;
   }
 
+  function parseCompetitionBlock(doc, fileMeta) {
+    const field = k => {
+      const m = doc.match(new RegExp('(?:^|[\\n;])\\s*' + k + '\\s*=\\s*([^;\\n]+)', 'i'));
+      return m ? m[1].trim() : '';
+    };
+    const awards = {};
+    String(extractNamedParen(doc, 'aw') || '').split(/[\n;]+/).forEach(line => {
+      const kv = line.trim().match(/^([A-Za-z0-9_]+)\s*=\s*(.+)$/);
+      if (kv) awards[kv[1].toLowerCase()] = kv[2].trim();
+    });
+    const captains = {};
+    String(extractNamedParen(doc, 'n') || '').split(/[\n,]+/).forEach(line => {
+      const m = line.trim().match(/^([A-Za-z0-9]{2,6})\s*=\s*([^\[\]]+)(?:\[([^\]]+)\])?/);
+      if (m) captains[m[1].toLowerCase()] = { club: m[1], name: m[2].trim(), player: (m[3] || '').trim() };
+    });
+    return {
+      id: field('id'),
+      name: field('e'),
+      season: field('s') || fileMeta.season || '2026A',
+      sport: fileMeta.sport,
+      sector: fileMeta.sector,
+      dos: field('dos'),
+      doc: field('doc'),
+      status: field('sts'),
+      type: field('typ'),
+      sort: Math.max(parseDate(field('doc')), parseDate(field('dos'))),
+      awards,
+      captains,
+      path: fileMeta.path
+    };
+  }
+
   function parse(text, fileMeta, errors) {
     const meta = Object.assign({}, fileMeta, headerMeta(text));
     const matches = [];
+    const competitions = [];
     const body = String(text || '').replace(/\r/g, '');
     const docs = body.split(/\[\s*(?=id\s*=)/i).slice(1);
     docs.forEach((doc, i) => {
-      const competition = (doc.match(/^id\s*=\s*([A-Za-z0-9_-]+)/i) || [])[1] || fileMeta.competition || '';
+      const block = parseCompetitionBlock(doc, fileMeta);
+      if (block.id && block.type !== 'seasonal' && !/^seasonal/i.test(block.name || '')) competitions.push(block);
+      const competition = block.id || fileMeta.competition || '';
       const mBody = extractNamedParen(doc, 'm');
       if (!mBody) return;
       const lines = mBody.split(/[\n;]+/).map(x => x.trim()).filter(x => x && !x.startsWith('#'));
@@ -140,8 +192,19 @@ const CASPER_CSN = (() => {
         if (row) matches.push(row);
       });
     });
-    return { meta, matches };
+    return { meta, matches, competitions };
   }
 
-  return { parse, parseScorePair };
+  function parseSeason(text, fileMeta, errors) {
+    return parse(text, fileMeta, errors || []);
+  }
+
+  return {
+    parse,
+    parseSeason,
+    parseScorePair,
+    parseDate,
+    extractParen: extractNamedParen,
+    extractNamedParen
+  };
 })();
