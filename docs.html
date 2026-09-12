@@ -1,12 +1,17 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>CASPER — Redirect</title>
-  <script src="js/redirect.js?v=spa1"></script>
-</head>
-<body>
-  <p>Moved to the SPA. <a href="index.html#/">Open CASPER</a>.</p>
-</body>
-</html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CASPER — Docs</title><link rel="stylesheet" href="css/style.css?v=21"></head>
+<body class="docs-body">
+<header class="topbar docs-topbar"><a class="brand" href="index.html"><span class="brand-mark">C</span>CASPER</a><nav><a href="index.html">HOME</a><a href="index.html#sectors">SECTORS</a><a href="index.html#competitions">COMPETITIONS</a><a href="index.html#clubs">CLUBS</a><a href="index.html#players">PLAYERS</a><a href="index.html#records">RECORDS</a><a class="active" href="docs.html">DOCS</a></nav><a class="search" href="index.html">↩</a></header>
+<div class="docs-shell"><aside class="docs-sidebar"><div class="side-label">AVAILABLE DOCS</div><div id="doc-list">Loading docs…</div></aside><main class="docs-content"><div class="doc-head"><span class="doc-kicker">CASPER // DOCUMENTATION</span><h1 id="title">DOCUMENTATION</h1><p id="subtitle">Loading available documentation from <code>docs/</code>…</p></div><div class="status" id="status">Discovering Markdown files in <code>docs/</code>.</div><article class="markdown" id="markdown"></article></main></div>
+<script>
+const root='docs/',list=document.getElementById('doc-list'),md=document.getElementById('markdown'),title=document.getElementById('title'),subtitle=document.getElementById('subtitle'),status=document.getElementById('status');let docs=[];
+const escape=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function inline(s){s=escape(s).replace(/`([^`]+)`/g,'<code>$1</code>').replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>').replace(/\*([^*]+)\*/g,'<em>$1</em>').replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2">$1</a>');return s}
+function render(src){const a=src.replace(/\r/g,'').split('\n'),o=[];let i=0,c=false,b=[];while(i<a.length){const l=a[i];if(l.startsWith('```')){if(!c){c=true;b=[]}else{o.push('<pre><code>'+escape(b.join('\n'))+'</code></pre>');c=false}i++;continue}if(c){b.push(l);i++;continue}if(!l.trim()){i++;continue}if(/^#{1,4} /.test(l)){const n=l.match(/^#+/)[0].length;o.push('<h'+n+'>'+inline(l.slice(n+1))+'</h'+n+'>');i++;continue}if(/^---+$/.test(l.trim())){o.push('<hr>');i++;continue}if(l.startsWith('> ')){o.push('<blockquote>'+inline(l.slice(2))+'</blockquote>');i++;continue}if(/^[-*] /.test(l)){const x=[];while(i<a.length&&/^[-*] /.test(a[i])){x.push('<li>'+inline(a[i].slice(2))+'</li>');i++}o.push('<ul>'+x.join('')+'</ul>');continue}if(/^\d+\. /.test(l)){const x=[];while(i<a.length&&/^\d+\. /.test(a[i])){x.push('<li>'+inline(a[i].replace(/^\d+\. /,''))+'</li>');i++}o.push('<ol>'+x.join('')+'</ol>');continue}if(l.includes('|')&&i+1<a.length&&/^\s*\|?\s*:?-+:?/.test(a[i+1])){const p=x=>x.trim().replace(/^\||\|$/g,'').split('|').map(v=>v.trim()),h=p(l),r=[];let j=i+2;while(j<a.length&&a[j].includes('|')){r.push(p(a[j]));j++}o.push('<table><thead><tr>'+h.map(x=>'<th>'+inline(x)+'</th>').join('')+'</tr></thead><tbody>'+r.map(x=>'<tr>'+x.map(y=>'<td>'+inline(y)+'</td>').join('')+'</tr>').join('')+'</tbody></table>');i=j;continue}const p=[l];i++;while(i<a.length&&a[i].trim()&&!/^#{1,4} /.test(a[i])&&!/^```/.test(a[i])&&!/^[-*] /.test(a[i])&&!/^\d+\. /.test(a[i])&&!a[i].includes('|')){p.push(a[i]);i++}o.push('<p>'+inline(p.join(' '))+'</p>')}return o.join('')}
+const name=p=>p.split('/').pop().replace(/\.md$/i,'').replace(/[_-]+/g,' ').replace(/\b\w/g,x=>x.toUpperCase());
+function renderList(){list.innerHTML=docs.map(d=>'<a class="doclink" href="?doc='+encodeURIComponent(d.name)+'" data-name="'+d.name+'">'+name(d.name)+'<small>'+d.name+'</small></a>').join('')}
+async function openDoc(file){document.querySelectorAll('.doclink').forEach(x=>x.classList.toggle('active',x.dataset.name===file));title.textContent=name(file);subtitle.textContent='CASPER documentation · docs/'+file;try{const r=await fetch(root+file+'?v='+Date.now());if(!r.ok)throw Error('Unable to load '+file);md.innerHTML=render(await r.text());document.title='CASPER — '+name(file)}catch(e){md.innerHTML='<div class="error">'+e.message+'</div>'}}
+async function discover(){try{const r=await fetch('https://api.github.com/repos/Anish-C2/Experiments/contents/docs');if(!r.ok)throw Error('GitHub API returned '+r.status);docs=(await r.json()).filter(x=>x.type==='file'&&x.name.toLowerCase().endsWith('.md')).sort((a,b)=>a.name.localeCompare(b.name));if(!docs.length)throw Error('No Markdown files found in docs/');renderList();const wanted=new URLSearchParams(location.search).get('doc'),first=docs.find(x=>x.name===wanted)||docs[0];await openDoc(first.name);status.textContent=docs.length+' Markdown document'+(docs.length===1?'':'s')+' discovered from docs/.'}catch(e){status.className='error';status.textContent='Could not discover docs: '+e.message}}
+discover();
+</script></body></html>
