@@ -1,6 +1,8 @@
 html,body{overflow-x:visible}
-/* CASPER responsive layout — tables scroll inside their box instead of stretching the page. */
 main,.site-footer,main>*,.mast,.data-grid,.data-grid>*,.detail-grid,.detail-grid>*,.competition-shell,.comp-main,.comp-main>*,.box,.table-scroll,.comp-list{min-width:0}
+main{padding-bottom:72px}
+.page-end-pad{height:56px}
+.site-footer{margin-bottom:28px}
 .stats{grid-template-columns:repeat(auto-fit,minmax(112px,1fr))}
 .stats div,.stats small,.stats strong,.stats span{min-width:0;overflow:hidden;text-overflow:ellipsis}
 .sector-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -16,6 +18,8 @@ main,.site-footer,main>*,.mast,.data-grid,.data-grid>*,.detail-grid,.detail-grid
 .filter-bar input,#filter{width:100%;min-width:0;padding:11px;background:#0c0f13;border:1px solid #252b33;color:#fff;font:500 10px JetBrains Mono;outline:0}
 .topbar .search{margin-left:auto;flex:0 0 auto}
 .sector-card h2 a{text-decoration:none}
+.list-row-rich{grid-template-columns:90px minmax(180px,2fr) minmax(160px,1.2fr) minmax(220px,1.4fr)}
+.list-row-rich small{white-space:normal;text-align:right;line-height:1.35}
 @media(max-width:1050px){
   .mast{grid-template-columns:minmax(0,1fr) minmax(0,280px)}
   .data-grid{grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);grid-template-areas:'clubs players' 'clubs results' 'comps comps' 'records form'}
