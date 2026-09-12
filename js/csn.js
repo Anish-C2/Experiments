@@ -142,7 +142,7 @@ const CASPER_CSN = (() => {
     };
     const awards = {};
     String(extractNamedParen(doc, 'aw') || '').split(/[\n;]+/).forEach(line => {
-      const kv = line.trim().match(/^([A-Za-z0-9_]+)\s*=\s*(.+)$/);
+      const kv = line.trim().match(/^([A-Za-z0-9_ ]+?)\s*=\s*(.+)$/);
       if (kv) awards[kv[1].toLowerCase()] = kv[2].trim();
     });
     const captains = {};
@@ -175,7 +175,7 @@ const CASPER_CSN = (() => {
     const docs = body.split(/\[\s*(?=id\s*=)/i).slice(1);
     docs.forEach((doc, i) => {
       const block = parseCompetitionBlock(doc, fileMeta);
-      if (block.id && block.type !== 'seasonal' && !/^seasonal/i.test(block.name || '')) competitions.push(block);
+      if (block.id) competitions.push(block);
       const competition = block.id || fileMeta.competition || '';
       const mBody = extractNamedParen(doc, 'm');
       if (!mBody) return;
