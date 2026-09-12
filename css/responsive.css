@@ -1,8 +1,8 @@
 html,body{overflow-x:visible}
 main,.site-footer,main>*,.mast,.data-grid,.data-grid>*,.detail-grid,.detail-grid>*,.competition-shell,.comp-main,.comp-main>*,.box,.table-scroll,.comp-list{min-width:0}
-main{padding-bottom:72px}
-.page-end-pad{height:56px}
-.site-footer{margin-bottom:28px}
+main{padding-bottom:160px}
+.page-end-pad{display:block;height:120px;min-height:120px}
+.site-footer{margin-bottom:48px}
 .stats{grid-template-columns:repeat(auto-fit,minmax(112px,1fr))}
 .stats div,.stats small,.stats strong,.stats span{min-width:0;overflow:hidden;text-overflow:ellipsis}
 .sector-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
