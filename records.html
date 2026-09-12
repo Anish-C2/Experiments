@@ -3,10 +3,52 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>CASPER — Redirect</title>
-  <script src="js/redirect.js?v=spa1"></script>
+  <title>CASPER — Records & Honors</title>
+  <link rel="stylesheet" href="css/style.css?v=21">
+  <link rel="stylesheet" href="css/responsive.css?v=21">
 </head>
-<body>
-  <p>Moved to the SPA. <a href="index.html#/">Open CASPER</a>.</p>
+<body data-page="records">
+<header class="topbar">
+  <a class="brand" href="index.html"><span class="brand-mark">C</span>CASPER</a>
+  <nav>
+    <a href="index.html">HOME</a>
+    <a href="sectors.html">SECTORS</a>
+    <a href="competitions.html">COMPETITIONS</a>
+    <a href="clubs.html">CLUBS</a>
+    <a href="players.html">PLAYERS</a>
+    <a href="matches.html">MATCHES</a>
+    <a class="active" href="records.html">RECORDS</a>
+    <a href="docs.html">DOCS</a>
+  </nav>
+</header>
+<main>
+  <section class="mast">
+    <div>
+      <span class="eyebrow">CASPER // HONOR SYSTEM</span>
+      <h1>RECORDS & AWARDS</h1>
+      <p>Sector honors are calculated from official CSN results. The last tournament in a sport, by <code>doc</code> then <code>dos</code>, is the crown. Golden honors need two or three hosted sports.</p>
+    </div>
+  </section>
+  <div class="chip-row" id="sector-chips"></div>
+  <div id="directory"></div>
+</main>
+<script src="js/csn.js?v=21"></script>
+<script src="js/csn-meta.js?v=21"></script>
+<script src="js/data.js?v=21"></script>
+<script src="js/awards.js?v=21"></script>
+<script>
+(async () => {
+  const model = await CASPER_DATA.load();
+  const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const wanted = new URLSearchParams(location.search).get('sector') || 'ALL';
+  const chips = document.getElementById('sector-chips');
+  chips.innerHTML = [{nickname:'ALL',name:'ALL SECTORS'}, ...model.sectors].map(s =>
+    `<a class="chip${s.nickname===wanted?' active':''}" href="records.html${s.nickname==='ALL'?'':'?sector='+encodeURIComponent(s.nickname)}">${esc(s.nickname==='ALL'?'ALL SECTORS':s.nickname)}</a>`
+  ).join('');
+  CASPER_AWARDS.render(document.getElementById('directory'), model, wanted);
+})().catch(err => {
+  document.querySelector('main').insertAdjacentHTML('afterbegin', `<div class="data-error">CASPER DATA ERROR · ${err.message}</div>`);
+});
+</script>
 </body>
 </html>
