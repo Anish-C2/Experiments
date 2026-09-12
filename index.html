@@ -4,83 +4,37 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>CASPER — Sector Network</title>
-  <link rel="stylesheet" href="css/style.css?v=16">
-  <link rel="stylesheet" href="css/responsive.css?v=5">
+  <link rel="stylesheet" href="css/style.css?v=spa1">
+  <link rel="stylesheet" href="css/responsive.css?v=spa1">
 </head>
 <body>
 <header class="topbar">
-  <a class="brand" href="index.html"><span class="brand-mark">C</span>CASPER</a>
+  <a class="brand" href="#/"><span class="brand-mark">C</span>CASPER</a>
   <nav>
-    <a class="active" href="index.html">HOME</a>
-    <a href="sectors.html">SECTORS</a>
-    <a href="competitions.html">COMPETITIONS</a>
-    <a href="clubs.html">CLUBS</a>
-    <a href="players.html">PLAYERS</a>
-    <a href="matches.html">MATCHES</a>
-    <a href="records.html">RECORDS</a>
-    <a href="docs.html">DOCS</a>
+    <a data-nav="home" href="#/">HOME</a>
+    <a data-nav="sectors" href="#/sectors">SECTORS</a>
+    <a data-nav="competitions" href="#/competitions">COMPETITIONS</a>
+    <a data-nav="clubs" href="#/clubs">CLUBS</a>
+    <a data-nav="players" href="#/players">PLAYERS</a>
+    <a data-nav="matches" href="#/matches">MATCHES</a>
+    <a data-nav="records" href="#/records">RECORDS</a>
+    <a data-nav="docs" href="#/docs">DOCS</a>
   </nav>
 </header>
-<main id="top">
-  <section class="mast sector-mast">
-    <div>
-      <span class="eyebrow">CASPER // REMOTE OPERATING NETWORK</span>
-      <h1>SECTOR NETWORK</h1>
-      <p>CASPER operates remotely through geographical sectors. Each sector is a regional sporting jurisdiction containing clubs, players, competitions and results. Use the sector switch to inspect one jurisdiction without mixing it into a flat network table.</p>
-    </div>
-    <div class="mast-grid">
-      <span>SECTORS<strong>00</strong></span>
-      <span>ACTIVE<strong>00</strong></span>
-      <span>CLUBS<strong>00</strong></span>
-      <span>PLAYERS<strong>00</strong></span>
-    </div>
-  </section>
-  <section class="ticker"><b>NETWORK</b><span id="ticker-copy">Loading sectors…</span></section>
-  <div class="chip-row" id="sector-switch"></div>
-  <section class="stats"></section>
-  <section class="sector-grid" id="sectors"></section>
-  <section class="data-grid">
-    <article class="box mega" id="clubs">
-      <header>
-        <div><small>SECTOR TABLE · FOOTBALL</small><h2>CLUB TABLE</h2></div>
-        <span>FOOTBALL ONLY</span>
-      </header>
-      <div class="table-scroll"><div id="club-table"></div></div>
-    </article>
-    <article class="box players-box" id="players">
-      <header><div><small>SECTOR SCOPE · SPORT-SPECIFIC</small><h2>PLAYER LEADERS</h2></div></header>
-      <div id="players-list"></div>
-    </article>
-    <article class="box results-box" id="results">
-      <header><div><small>SECTOR SCOPE · RESULT CENTRE</small><h2>RECENT RESULTS</h2></div></header>
-      <div id="results-list"></div>
-    </article>
-    <article class="box wide" id="competitions">
-      <header>
-        <div><small>SECTORAL COMPETITIONS</small><h2>COMPETITION INDEX</h2></div>
-        <span id="competition-count">REGISTRY</span>
-      </header>
-      <div class="comp-list"><div id="competition-list"></div></div>
-    </article>
-    <article class="box record-box" id="records">
-      <header><div><small>SCOPE RECORDS</small><h2>RECORDS</h2></div></header>
-      <div class="record-list" id="record-list"></div>
-    </article>
-    <article class="box form-box" id="form">
-      <header><div><small>SECTOR PERFORMANCE</small><h2>FORM + SPLITS</h2></div></header>
-      <div class="form-grid" id="form-list"></div>
-    </article>
-  </section>
+<main id="app">
+  <section class="mast"><div><span class="eyebrow">CASPER // BOOT</span><h1>LOADING</h1><p>Reading registries and official CSN ledgers…</p></div></section>
 </main>
 <footer class="site-footer">
   <b>CASPER</b>
   <span>Competitive Athletics &amp; Sports Promotion</span>
   <span>REMOTE SECTOR NETWORK · 2026A OFFICIAL CSN</span>
 </footer>
-<script src="js/csn.js?v=19"></script>
-<script src="js/csn-meta.js?v=19"></script>
-<script src="js/data.js?v=19"></script>
-<script src="js/awards.js?v=19"></script>
-<script src="js/app.js?v=19"></script>
+<div class="data-health" id="data-health">DATA PIPELINE · LOADING</div>
+<script src="js/csn.js?v=spa1"></script>
+<script src="js/data.js?v=spa1"></script>
+<script src="js/awards.js?v=spa1"></script>
+<script src="js/router.js?v=spa1"></script>
+<script src="js/views.js?v=spa1"></script>
+<script src="js/app.js?v=spa1"></script>
 </body>
 </html>
